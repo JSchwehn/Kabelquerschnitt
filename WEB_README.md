@@ -7,8 +7,11 @@ This is a static web version of the DC Cable Diameter Calculator that can be dep
 - ✅ Full calculation functionality matching the Go CLI/TUI versions
 - ✅ Modern, responsive UI with Tailwind CSS
 - ✅ Dark mode support
+- ✅ **Multi-language support** (English, German, French, Swedish)
+- ✅ Language preference persistence (saved in browser)
 - ✅ No backend required - runs entirely in the browser
 - ✅ Works offline after initial load
+- ✅ Rounds up to nearest standard cable size for safety
 
 ## Deployment to GitHub Pages
 
@@ -95,10 +98,32 @@ Then visit `http://localhost:8000`
 
 ## Browser Compatibility
 
-- Chrome/Edge (latest)
-- Firefox (latest)
-- Safari (latest)
-- Mobile browsers (iOS Safari, Chrome Mobile)
+- Chrome/Edge (latest) - Full support
+- Firefox (latest) - Full support
+- Safari (latest) - Full support
+- Mobile browsers (iOS Safari, Chrome Mobile) - Full support
+
+All modern browsers with JavaScript enabled are supported. The application uses standard web APIs and should work in any browser from the last 5 years.
+
+## Internationalization
+
+The web version supports multiple languages:
+
+- **English** (en) - Default
+- **German** (de) - Deutsch
+- **French** (fr) - Français
+- **Swedish** (sv) - Svenska
+
+### Language Selection
+
+- Use the language selector in the top-right corner of the page
+- Your language preference is automatically saved in your browser's localStorage
+- The page will remember your choice on future visits
+- All UI elements, error messages, warnings, and results are translated
+
+### Adding New Languages
+
+To add a new language, edit `index.html` and add a new translation object to the `translations` object with all required keys. See the existing language objects for reference.
 
 ## Notes
 
@@ -106,6 +131,8 @@ Then visit `http://localhost:8000`
 - All calculations are performed client-side using vanilla JavaScript
 - No data is sent to any server - completely private
 - The calculations match the Go implementation exactly
+- Language preferences are stored locally in your browser (localStorage)
+- Cable sizes are rounded up to the nearest standard size for safety
 
 ## License
 
