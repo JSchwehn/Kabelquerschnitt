@@ -93,11 +93,18 @@ Then visit `http://localhost:8000`
 
 ```
 .
-├── index.html          # Main web application (single file)
+├── index.html          # Main HTML structure and UI
+├── translations.js     # All translation strings (i18n) for all supported languages
+├── script.js           # JavaScript application logic and calculations
 ├── test.html           # Test suite for calculation functions
 ├── README.md           # This file
 └── ...                 # Other project files
 ```
+
+The application follows a clean separation of concerns:
+- **HTML** (structure) and **JavaScript** (behavior) are separated
+- **Translations** are isolated in their own file for easy maintenance
+- This structure makes it easy to add new languages or modify translations without touching the main application logic
 
 ## Testing
 
@@ -150,6 +157,7 @@ The web version supports multiple languages:
 
 - **English** (en) - Default
 - **German** (de) - Deutsch
+- **German (Simple Language)** (de-simple) - Deutsch (Einfache Sprache) - Easy-to-read German for accessibility
 - **French** (fr) - Français
 - **Swedish** (sv) - Svenska
 
@@ -160,9 +168,34 @@ The web version supports multiple languages:
 - The page will remember your choice on future visits
 - All UI elements, error messages, warnings, and results are translated
 
+### Simple Language (Einfache Sprache)
+
+The German Simple Language version (de-simple) follows accessibility guidelines for easy-to-read text:
+- Short sentences (max 15 words)
+- Simple words and clear explanations
+- No technical terms without explanation
+- Clear structure and active voice
+- Concrete examples
+
+This makes the application more accessible to people with reading difficulties, learning disabilities, or limited German language skills.
+
 ### Adding New Languages
 
-To add a new language, edit `index.html` and add a new translation object to the `translations` object with all required keys. See the existing language objects for reference.
+To add a new language, edit `translations.js` and add a new translation object to the `translations` object with all required keys. See the existing language objects (en, de, de-simple, fr, sv) for reference.
+
+Example:
+```javascript
+const translations = {
+    // ... existing languages ...
+    "new-lang": {
+        title: "Translation",
+        subtitle: "Translation",
+        // ... all other keys ...
+    }
+};
+```
+
+After adding the translation, also add the language option to the language selector in `index.html`.
 
 ## Accessibility
 
@@ -178,6 +211,25 @@ The web version follows WCAG 2.1 accessibility guidelines:
 
 The application is fully accessible to users with disabilities and works well with screen readers like NVDA, JAWS, and VoiceOver.
 
+## Code Structure
+
+The application follows a clean separation of concerns:
+
+- **`index.html`**: Contains the HTML structure, semantic markup, and accessibility features
+- **`translations.js`**: Contains all translation strings for all supported languages (en, de, de-simple, fr, sv)
+- **`script.js`**: Contains all JavaScript application logic including:
+  - Internationalization (i18n) system and translation function
+  - Calculation functions (cable area, diameter, weight, etc.)
+  - Form validation and user interaction handling
+  - UI updates and screen reader announcements
+
+This separation provides:
+- Better code organization and maintainability
+- Easier debugging and testing
+- Improved browser caching (each file can be cached separately)
+- Clear separation between structure (HTML), translations (i18n), and behavior (JavaScript)
+- Easy to add new languages without modifying application logic
+
 ## Notes
 
 - The web version uses Tailwind CSS via CDN (requires internet connection for initial load)
@@ -186,7 +238,8 @@ The application is fully accessible to users with disabilities and works well wi
 - The calculations match the Go implementation exactly
 - Language preferences are stored locally in your browser (localStorage)
 - Cable sizes are rounded up to the nearest standard size for safety
-- Maximum system voltage is configurable via `MAX_VOLTAGE` constant (default: 50V)
+- Maximum system voltage is configurable via `MAX_VOLTAGE` constant in `script.js` (default: 50V)
+- Translations are managed in `translations.js` - easy to add new languages or modify existing translations
 
 ## License
 
