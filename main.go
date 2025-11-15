@@ -1,5 +1,13 @@
 package main
 
+// DC Cable Diameter Calculator
+//
+// This code has been developed with AI assistance.
+// While calculations and logic have been reviewed and tested,
+// users should verify results for critical applications.
+//
+// See README.md for full disclaimer and safety warnings.
+
 import (
 	"bufio"
 	"fmt"

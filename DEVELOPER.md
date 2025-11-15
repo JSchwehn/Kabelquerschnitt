@@ -2,6 +2,8 @@
 
 This document provides technical details for developers working on the DC Cable Diameter Calculator.
 
+> **Note:** This codebase has been developed with AI assistance. Developers should review all code carefully and verify calculations independently.
+
 ## Table of Contents
 
 - [Architecture](#architecture)
