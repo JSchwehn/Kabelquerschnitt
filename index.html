@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DC Cable Diameter Calculator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                color-scheme: dark;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 min-h-screen py-8 px-4">
+    <div class="max-w-4xl mx-auto">
+        <!-- Header -->
+        <div class="bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg shadow-lg p-6 mb-8">
+            <h1 class="text-3xl font-bold mb-2">DC Cable Diameter Calculator</h1>
+            <p class="text-purple-100">Calculate required cable cross-sectional area and diameter for DC electrical systems</p>
+            <p class="text-sm text-purple-200 mt-2">Supports 12V, 24V, 48V, 50V DC systems</p>
+        </div>
+
+        <!-- Calculator Form -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-6">
+            <h2 class="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-200">Input Parameters</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- System Voltage -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        System Voltage (V) <span class="text-red-500">*</span>
+                    </label>
+                    <input type="number" id="voltage" step="0.1" min="0" max="50" 
+                           class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white"
+                           placeholder="12, 24, 48, 50" required>
+                </div>
+
+                <!-- Current -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        Current (A) <span class="text-red-500">*</span>
+                    </label>
+                    <input type="number" id="current" step="0.1" min="0" 
+                           class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white"
+                           placeholder="10.0" required>
+                </div>
+
+                <!-- Cable Length -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        Cable Length (m) <span class="text-red-500">*</span>
+                    </label>
+                    <input type="number" id="length" step="0.1" min="0" 
+                           class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white"
+                           placeholder="5.0" required>
+                </div>
+
+                <!-- Max Voltage Drop -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        Max Voltage Drop (%)
+                    </label>
+                    <input type="number" id="voltageDrop" step="0.1" min="0" max="10" value="3.0"
+                           class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white"
+                           placeholder="3.0">
+                </div>
+
+                <!-- Ambient Temperature -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        Ambient Temperature
+                    </label>
+                    <div class="flex gap-2">
+                        <input type="number" id="temperature" step="0.1" value="20.0"
+                               class="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white"
+                               placeholder="20.0">
+                        <select id="tempUnit" 
+                                class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white">
+                            <option value="C">°C</option>
+                            <option value="F">°F</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Round Trip -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        Length Type
+                    </label>
+                    <select id="roundTrip" 
+                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white">
+                        <option value="false">One-way</option>
+                        <option value="true">Round trip</option>
+                    </select>
+                </div>
+
+                <!-- Material -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        Cable Material
+                    </label>
+                    <select id="material" 
+                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white">
+                        <option value="copper">Copper</option>
+                        <option value="aluminum">Aluminum</option>
+                    </select>
+                </div>
+
+                <!-- Installation Method -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        Installation Method
+                    </label>
+                    <select id="installation" 
+                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white">
+                        <option value="air">In Air (best cooling)</option>
+                        <option value="conduit">In Conduit (+10°C)</option>
+                        <option value="isolated">Isolated/Insulated (+20°C)</option>
+                    </select>
+                </div>
+
+                <!-- Wire Type -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        Wire Type
+                    </label>
+                    <select id="wireType" 
+                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white">
+                        <option value="flry">FLRY (105°C max)</option>
+                        <option value="flry-a">FLRY-A (105°C max)</option>
+                        <option value="flry-b">FLRY-B (105°C max)</option>
+                        <option value="thhn">THHN (90°C max)</option>
+                        <option value="thwn">THWN (75°C max)</option>
+                        <option value="xlpe">XLPE (90°C max)</option>
+                        <option value="pvc">PVC (70°C max)</option>
+                        <option value="silicon">Silicone (200°C max)</option>
+                        <option value="generic" selected>Generic (90°C max)</option>
+                    </select>
+                </div>
+            </div>
+
+            <button onclick="calculate()" 
+                    class="mt-6 w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md transition duration-200 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2">
+                Calculate
+            </button>
+        </div>
+
+        <!-- Results Section -->
+        <div id="results" class="hidden bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+            <h2 class="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-200">Calculation Results</h2>
+            
+            <!-- Input Summary -->
+            <div class="mb-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                <h3 class="font-semibold text-gray-800 dark:text-gray-200 mb-3">Input Parameters</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
+                    <div><span class="text-gray-600 dark:text-gray-400">System Voltage:</span> <span id="result-voltage" class="font-semibold text-gray-800 dark:text-gray-200"></span></div>
+                    <div><span class="text-gray-600 dark:text-gray-400">Current:</span> <span id="result-current" class="font-semibold text-gray-800 dark:text-gray-200"></span></div>
+                    <div><span class="text-gray-600 dark:text-gray-400">Cable Length:</span> <span id="result-length" class="font-semibold text-gray-800 dark:text-gray-200"></span></div>
+                    <div><span class="text-gray-600 dark:text-gray-400">Max Voltage Drop:</span> <span id="result-drop" class="font-semibold text-gray-800 dark:text-gray-200"></span></div>
+                    <div><span class="text-gray-600 dark:text-gray-400">Material:</span> <span id="result-material" class="font-semibold text-gray-800 dark:text-gray-200"></span></div>
+                    <div><span class="text-gray-600 dark:text-gray-400">Wire Type:</span> <span id="result-wiretype" class="font-semibold text-gray-800 dark:text-gray-200"></span></div>
+                    <div><span class="text-gray-600 dark:text-gray-400">Installation:</span> <span id="result-installation" class="font-semibold text-gray-800 dark:text-gray-200"></span></div>
+                    <div><span class="text-gray-600 dark:text-gray-400">Ambient Temp:</span> <span id="result-ambient" class="font-semibold text-gray-800 dark:text-gray-200"></span></div>
+                    <div><span class="text-gray-600 dark:text-gray-400">Effective Temp:</span> <span id="result-effective-temp" class="font-semibold text-gray-800 dark:text-gray-200"></span></div>
+                </div>
+            </div>
+
+            <!-- Warning -->
+            <div id="warning" class="hidden mb-4 p-4 rounded-lg"></div>
+
+            <!-- Required Size -->
+            <div class="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                <h3 class="font-semibold text-blue-900 dark:text-blue-200 mb-3">Required Cable Size</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <span class="text-sm text-blue-700 dark:text-blue-300">Cross-Sectional Area:</span>
+                        <div class="text-2xl font-bold text-blue-900 dark:text-blue-100" id="result-area"></div>
+                    </div>
+                    <div>
+                        <span class="text-sm text-blue-700 dark:text-blue-300">Diameter:</span>
+                        <div class="text-2xl font-bold text-blue-900 dark:text-blue-100" id="result-diameter"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recommended Sizes -->
+            <div class="mb-6 p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
+                <h3 class="font-semibold text-green-900 dark:text-green-200 mb-3">Recommended Standard Sizes</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <span class="text-sm text-green-700 dark:text-green-300">Metric:</span>
+                        <div class="text-xl font-bold text-green-900 dark:text-green-100" id="result-metric"></div>
+                        <span class="text-xs text-green-600 dark:text-green-400" id="result-metric-diff"></span>
+                    </div>
+                    <div>
+                        <span class="text-sm text-green-700 dark:text-green-300">AWG:</span>
+                        <div class="text-xl font-bold text-green-900 dark:text-green-100" id="result-awg"></div>
+                        <span class="text-xs text-green-600 dark:text-green-400" id="result-awg-diff"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Voltage Drop with Recommended Sizes -->
+            <div class="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-800">
+                <h3 class="font-semibold text-purple-900 dark:text-purple-200 mb-3">Voltage Drop with Recommended Sizes</h3>
+                <div class="space-y-2">
+                    <div>
+                        <span class="text-sm text-purple-700 dark:text-purple-300" id="result-drop-metric-label"></span>
+                        <div class="text-lg font-semibold text-purple-900 dark:text-purple-100" id="result-drop-metric"></div>
+                    </div>
+                    <div>
+                        <span class="text-sm text-purple-700 dark:text-purple-300" id="result-drop-awg-label"></span>
+                        <div class="text-lg font-semibold text-purple-900 dark:text-purple-100" id="result-drop-awg"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="mt-8 text-center text-sm text-gray-600 dark:text-gray-400">
+            <p>⚠️ <strong>Safety Warning:</strong> Always consult with a qualified electrician or electrical engineer for critical applications.</p>
+            <p class="mt-2">This tool provides calculations for voltage drop only and does not replace professional engineering judgment.</p>
+        </div>
+    </div>
+
+    <script>
+        // Constants
+        const COPPER_RESISTIVITY_20C = 0.0175; // Ω·mm²/m
+        const ALUMINUM_RESISTIVITY_20C = 0.0283; // Ω·mm²/m
+        const COPPER_TEMP_COEFFICIENT = 0.00393; // per °C
+        const ALUMINUM_TEMP_COEFFICIENT = 0.00403; // per °C
+        const REFERENCE_TEMP = 20.0; // °C
+
+        // Materials
+        const materials = {
+            copper: {
+                name: "Copper",
+                resistivity20C: COPPER_RESISTIVITY_20C,
+                tempCoefficient: COPPER_TEMP_COEFFICIENT
+            },
+            aluminum: {
+                name: "Aluminum",
+                resistivity20C: ALUMINUM_RESISTIVITY_20C,
+                tempCoefficient: ALUMINUM_TEMP_COEFFICIENT
+            }
+        };
+
+        // Installation method adjustments (°C)
+        const installationAdjustments = {
+            air: 0.0,
+            conduit: 10.0,
+            isolated: 20.0
+        };
+
+        const installationNames = {
+            air: "In Air",
+            conduit: "In Conduit",
+            isolated: "Isolated/Insulated"
+        };
+
+        // Wire types
+        const wireTypes = {
+            flry: { name: "FLRY", maxTemp: 105.0, description: "Automotive thin-wall PVC" },
+            "flry-a": { name: "FLRY-A", maxTemp: 105.0, description: "Automotive flexible stranded" },
+            "flry-b": { name: "FLRY-B", maxTemp: 105.0, description: "Automotive symmetrical stranded" },
+            thhn: { name: "THHN", maxTemp: 90.0, description: "Thermoplastic, high heat, nylon" },
+            thwn: { name: "THWN", maxTemp: 75.0, description: "Thermoplastic, heat/water resistant" },
+            xlpe: { name: "XLPE", maxTemp: 90.0, description: "Cross-linked polyethylene" },
+            pvc: { name: "PVC", maxTemp: 70.0, description: "Standard PVC" },
+            silicon: { name: "Silicone", maxTemp: 200.0, description: "Silicone rubber" },
+            generic: { name: "Generic", maxTemp: 90.0, description: "Generic wire" }
+        };
+
+        // Standard metric sizes (mm²)
+        const standardMetricSizes = [0.5, 0.75, 1.0, 1.5, 2.5, 4.0, 6.0, 10.0, 16.0, 25.0, 35.0, 50.0, 70.0, 95.0, 120.0, 150.0, 185.0, 240.0];
+
+        // AWG sizes
+        const awgSizes = [
+            { label: "18", area: 0.823 },
+            { label: "16", area: 1.309 },
+            { label: "14", area: 2.081 },
+            { label: "12", area: 3.309 },
+            { label: "10", area: 5.261 },
+            { label: "8", area: 8.367 },
+            { label: "6", area: 13.30 },
+            { label: "4", area: 21.15 },
+            { label: "2", area: 33.62 },
+            { label: "1", area: 42.41 },
+            { label: "1/0", area: 53.49 },
+            { label: "2/0", area: 67.43 },
+            { label: "3/0", area: 85.01 },
+            { label: "4/0", area: 107.2 }
+        ];
+
+        // Temperature conversion
+        function fahrenheitToCelsius(f) {
+            return (f - 32) * 5 / 9;
+        }
+
+        function celsiusToFahrenheit(c) {
+            return c * 9 / 5 + 32;
+        }
+
+        // Calculate resistivity at given temperature
+        function calculateResistivityAtTemp(material, tempCelsius) {
+            return material.resistivity20C * (1 + material.tempCoefficient * (tempCelsius - REFERENCE_TEMP));
+        }
+
+        // Calculate effective operating temperature
+        function calculateEffectiveTemp(ambientTempCelsius, installation) {
+            return ambientTempCelsius + installationAdjustments[installation];
+        }
+
+        // Validate wire temperature
+        function validateWireTemperature(effectiveTempCelsius, wireType) {
+            if (effectiveTempCelsius > wireType.maxTemp) {
+                return {
+                    isValid: false,
+                    message: `WARNING: Effective operating temperature (${effectiveTempCelsius.toFixed(1)}°C) exceeds ${wireType.name} maximum rating (${wireType.maxTemp}°C)! Wire insulation may fail.`
+                };
+            }
+            if (effectiveTempCelsius > wireType.maxTemp * 0.9) {
+                return {
+                    isValid: true,
+                    message: `CAUTION: Effective operating temperature (${effectiveTempCelsius.toFixed(1)}°C) is close to ${wireType.name} maximum rating (${wireType.maxTemp}°C). Consider using a higher temperature rated wire.`
+                };
+            }
+            return { isValid: true, message: "" };
+        }
+
+        // Calculate required cable area
+        function calculateCableArea(voltage, current, length, maxVoltageDropPercent, material, roundTrip, ambientTempCelsius, installation) {
+            const maxVoltageDrop = voltage * (maxVoltageDropPercent / 100.0);
+            const distanceFactor = roundTrip ? 2.0 : 1.0;
+            const effectiveTemp = calculateEffectiveTemp(ambientTempCelsius, installation);
+            const resistivity = calculateResistivityAtTemp(material, effectiveTemp);
+            return (current * resistivity * length * distanceFactor) / maxVoltageDrop;
+        }
+
+        // Calculate diameter from area
+        function areaToDiameter(area) {
+            return 2 * Math.sqrt(area / Math.PI);
+        }
+
+        // Find closest metric size
+        function findClosestMetricSize(requiredArea) {
+            let closestSize = standardMetricSizes[0];
+            let minDiff = Math.abs(standardMetricSizes[0] - requiredArea);
+            for (const size of standardMetricSizes) {
+                const diff = Math.abs(size - requiredArea);
+                if (diff < minDiff) {
+                    minDiff = diff;
+                    closestSize = size;
+                }
+            }
+            return { size: closestSize, diff: minDiff };
+        }
+
+        // Find closest AWG size
+        function findClosestAWG(requiredArea) {
+            let closestLabel = awgSizes[0].label;
+            let closestArea = awgSizes[0].area;
+            let minDiff = Math.abs(awgSizes[0].area - requiredArea);
+            for (const awg of awgSizes) {
+                const diff = Math.abs(awg.area - requiredArea);
+                if (diff < minDiff) {
+                    minDiff = diff;
+                    closestLabel = awg.label;
+                    closestArea = awg.area;
+                }
+            }
+            return { label: closestLabel, area: closestArea, diff: minDiff };
+        }
+
+        // Main calculation function
+        function calculate() {
+            // Get input values
+            const voltage = parseFloat(document.getElementById('voltage').value);
+            const current = parseFloat(document.getElementById('current').value);
+            const length = parseFloat(document.getElementById('length').value);
+            const maxVoltageDropPercent = parseFloat(document.getElementById('voltageDrop').value) || 3.0;
+            const ambientTemp = parseFloat(document.getElementById('temperature').value) || 20.0;
+            const tempUnit = document.getElementById('tempUnit').value;
+            const roundTrip = document.getElementById('roundTrip').value === 'true';
+            const materialKey = document.getElementById('material').value;
+            const installation = document.getElementById('installation').value;
+            const wireTypeKey = document.getElementById('wireType').value;
+
+            // Validation
+            if (!voltage || voltage <= 0 || voltage > 50) {
+                alert('Error: Invalid voltage. Please enter a value between 0 and 50V.');
+                return;
+            }
+            if (!current || current <= 0) {
+                alert('Error: Invalid current. Please enter a positive value.');
+                return;
+            }
+            if (!length || length <= 0) {
+                alert('Error: Invalid length. Please enter a positive value.');
+                return;
+            }
+
+            // Convert temperature to Celsius
+            let ambientTempCelsius = ambientTemp;
+            if (tempUnit === 'F') {
+                ambientTempCelsius = fahrenheitToCelsius(ambientTemp);
+            }
+
+            // Get material and wire type
+            const material = materials[materialKey];
+            const wireType = wireTypes[wireTypeKey];
+
+            // Calculate effective temperature
+            const effectiveTemp = calculateEffectiveTemp(ambientTempCelsius, installation);
+
+            // Validate wire temperature
+            const tempValidation = validateWireTemperature(effectiveTemp, wireType);
+
+            // Calculate required area
+            const requiredArea = calculateCableArea(voltage, current, length, maxVoltageDropPercent, material, roundTrip, ambientTempCelsius, installation);
+            const requiredDiameter = areaToDiameter(requiredArea);
+
+            // Find standard sizes
+            const metricResult = findClosestMetricSize(requiredArea);
+            const awgResult = findClosestAWG(requiredArea);
+
+            // Calculate actual voltage drops
+            const resistivity = calculateResistivityAtTemp(material, effectiveTemp);
+            const distanceFactor = roundTrip ? 2.0 : 1.0;
+            const actualDropMetric = (current * resistivity * length * distanceFactor) / metricResult.size;
+            const actualDropPercentMetric = (actualDropMetric / voltage) * 100;
+            const actualDropAWG = (current * resistivity * length * distanceFactor) / awgResult.area;
+            const actualDropPercentAWG = (actualDropAWG / voltage) * 100;
+
+            // Display results
+            document.getElementById('result-voltage').textContent = `${voltage.toFixed(1)} V`;
+            document.getElementById('result-current').textContent = `${current.toFixed(2)} A`;
+            document.getElementById('result-length').textContent = `${length.toFixed(2)} m (${roundTrip ? 'round trip' : 'one-way'})`;
+            document.getElementById('result-drop').textContent = `${maxVoltageDropPercent.toFixed(2)}% (${(voltage * maxVoltageDropPercent / 100).toFixed(2)} V)`;
+            document.getElementById('result-material').textContent = material.name;
+            document.getElementById('result-wiretype').textContent = `${wireType.name} (Max: ${wireType.maxTemp}°C)`;
+            document.getElementById('result-installation').textContent = installationNames[installation];
+            document.getElementById('result-ambient').textContent = `${ambientTemp.toFixed(1)}°${tempUnit} (${ambientTempCelsius.toFixed(1)}°C)`;
+            document.getElementById('result-effective-temp').textContent = `${effectiveTemp.toFixed(1)}°C`;
+
+            // Display warning if needed
+            const warningDiv = document.getElementById('warning');
+            if (!tempValidation.isValid || tempValidation.message) {
+                warningDiv.classList.remove('hidden');
+                if (!tempValidation.isValid) {
+                    warningDiv.className = 'mb-4 p-4 rounded-lg bg-red-100 dark:bg-red-900/20 border border-red-300 dark:border-red-800';
+                    warningDiv.innerHTML = `<div class="text-red-800 dark:text-red-200 font-semibold">⚠️ ${tempValidation.message}</div><div class="text-sm text-red-700 dark:text-red-300 mt-2">The calculated cable size may not be safe for this wire type! Consider: using a higher temperature rated wire, reducing ambient temperature, improving cooling, or increasing cable size to reduce heat generation.</div>`;
+                } else {
+                    warningDiv.className = 'mb-4 p-4 rounded-lg bg-yellow-100 dark:bg-yellow-900/20 border border-yellow-300 dark:border-yellow-800';
+                    warningDiv.innerHTML = `<div class="text-yellow-800 dark:text-yellow-200 font-semibold">⚠️ ${tempValidation.message}</div>`;
+                }
+            } else {
+                warningDiv.classList.add('hidden');
+            }
+
+            // Display required size
+            document.getElementById('result-area').textContent = `${requiredArea.toFixed(2)} mm²`;
+            document.getElementById('result-diameter').textContent = `${requiredDiameter.toFixed(2)} mm`;
+
+            // Display recommended sizes
+            document.getElementById('result-metric').textContent = `${metricResult.size.toFixed(2)} mm²`;
+            document.getElementById('result-metric-diff').textContent = `(difference: ${metricResult.diff.toFixed(2)} mm²)`;
+            document.getElementById('result-awg').textContent = `AWG ${awgResult.label} (${awgResult.area.toFixed(2)} mm²)`;
+            document.getElementById('result-awg-diff').textContent = `(difference: ${awgResult.diff.toFixed(2)} mm²)`;
+
+            // Display voltage drops
+            document.getElementById('result-drop-metric-label').textContent = `With ${metricResult.size.toFixed(2)} mm²:`;
+            document.getElementById('result-drop-metric').textContent = `${actualDropMetric.toFixed(2)} V (${actualDropPercentMetric.toFixed(2)}%)`;
+            document.getElementById('result-drop-awg-label').textContent = `With AWG ${awgResult.label} (${awgResult.area.toFixed(2)} mm²):`;
+            document.getElementById('result-drop-awg').textContent = `${actualDropAWG.toFixed(2)} V (${actualDropPercentAWG.toFixed(2)}%)`;
+
+            // Show results section
+            document.getElementById('results').classList.remove('hidden');
+            document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        // Allow Enter key to trigger calculation
+        document.addEventListener('DOMContentLoaded', function() {
+            const inputs = document.querySelectorAll('input, select');
+            inputs.forEach(input => {
+                input.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        calculate();
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
+
