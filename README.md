@@ -9,6 +9,8 @@ This is a static web version of the DC Cable Diameter Calculator that can be dep
 - ✅ Dark mode support
 - ✅ **Multi-language support** (English, German, French, Swedish)
 - ✅ Language preference persistence (saved in browser)
+- ✅ **Cable weight calculation** (for copper and aluminum)
+- ✅ **Accessibility features** (WCAG 2.1 compliant, screen reader support, keyboard navigation)
 - ✅ No backend required - runs entirely in the browser
 - ✅ Works offline after initial load
 - ✅ Rounds up to nearest standard cable size for safety
@@ -93,7 +95,7 @@ Then visit `http://localhost:8000`
 .
 ├── index.html          # Main web application (single file)
 ├── test.html           # Test suite for calculation functions
-├── WEB_README.md       # This file
+├── README.md           # This file
 └── ...                 # Other project files
 ```
 
@@ -118,6 +120,20 @@ The test suite includes:
 - ✅ Round-trip verification
 - ✅ Comparison tests (copper vs aluminum, different temperatures, etc.)
 - ✅ Visual test results with pass/fail indicators
+
+## Cable Weight Calculation
+
+The calculator now includes cable weight estimation based on:
+- Cross-sectional area (mm²)
+- Cable length (meters)
+- Material (copper or aluminum)
+- Round trip vs one-way configuration
+
+Weight is displayed in grams (g) for smaller cables and kilograms (kg) for larger cables. The calculation accounts for both conductors in round-trip configurations.
+
+**Material densities:**
+- Copper: 8.96 g/m per mm²
+- Aluminum: 2.70 g/m per mm²
 
 ## Browser Compatibility
 
@@ -148,6 +164,20 @@ The web version supports multiple languages:
 
 To add a new language, edit `index.html` and add a new translation object to the `translations` object with all required keys. See the existing language objects for reference.
 
+## Accessibility
+
+The web version follows WCAG 2.1 accessibility guidelines:
+
+- ✅ **Semantic HTML** - Proper use of `<header>`, `<main>`, `<section>`, and definition lists
+- ✅ **ARIA labels** - All interactive elements have proper ARIA attributes
+- ✅ **Screen reader support** - ARIA live regions announce calculation results
+- ✅ **Keyboard navigation** - Full keyboard support with skip links
+- ✅ **Focus management** - Automatic focus on results after calculation
+- ✅ **Form labels** - All form fields are properly labeled and associated
+- ✅ **Error announcements** - Validation errors are announced to screen readers
+
+The application is fully accessible to users with disabilities and works well with screen readers like NVDA, JAWS, and VoiceOver.
+
 ## Notes
 
 - The web version uses Tailwind CSS via CDN (requires internet connection for initial load)
@@ -156,6 +186,7 @@ To add a new language, edit `index.html` and add a new translation object to the
 - The calculations match the Go implementation exactly
 - Language preferences are stored locally in your browser (localStorage)
 - Cable sizes are rounded up to the nearest standard size for safety
+- Maximum system voltage is configurable via `MAX_VOLTAGE` constant (default: 50V)
 
 ## License
 
