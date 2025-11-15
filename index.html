@@ -12,13 +12,44 @@
                 color-scheme: dark;
             }
         }
+
+        /* Screen reader only class */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border-width: 0;
+        }
+
+        .sr-only:focus,
+        .focus\:not-sr-only:focus {
+            position: static;
+            width: auto;
+            height: auto;
+            padding: inherit;
+            margin: inherit;
+            overflow: visible;
+            clip: auto;
+            white-space: normal;
+        }
     </style>
 </head>
 
 <body class="bg-gray-50 dark:bg-gray-900 min-h-screen py-8 px-4">
+    <!-- Skip to main content link for screen readers -->
+    <a href="#main-content"
+        class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-purple-600 focus:text-white focus:rounded-md">Skip
+        to main content</a>
+
     <div class="max-w-4xl mx-auto">
         <!-- Header -->
-        <div class="bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg shadow-lg p-6 mb-8">
+        <header class="bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg shadow-lg p-6 mb-8"
+            role="banner">
             <div class="flex justify-between items-start">
                 <div class="flex-1">
                     <h1 class="text-3xl font-bold mb-2" data-i18n="title">DC Cable Diameter Calculator</h1>
@@ -28,8 +59,9 @@
                     </p>
                 </div>
                 <div class="ml-4">
-                    <label class="block text-sm font-medium text-purple-100 mb-1" data-i18n="language">Language</label>
-                    <select id="language" onchange="changeLanguage(this.value)"
+                    <label for="language" class="block text-sm font-medium text-purple-100 mb-1"
+                        data-i18n="language">Language</label>
+                    <select id="language" onchange="changeLanguage(this.value)" aria-label="Select language"
                         class="px-3 py-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-white/50">
                         <option value="en">English</option>
                         <option value="de">Deutsch</option>
@@ -38,242 +70,291 @@
                     </select>
                 </div>
             </div>
-        </div>
+        </header>
 
         <!-- Calculator Form -->
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-6">
-            <h2 class="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-200" data-i18n="inputParameters">Input
-                Parameters</h2>
+        <main id="main-content" role="main">
+            <section class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-6" aria-labelledby="input-heading">
+                <h2 id="input-heading" class="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-200"
+                    data-i18n="inputParameters">Input
+                    Parameters</h2>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <!-- System Voltage -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                        <span data-i18n="systemVoltage">System Voltage (V)</span> <span class="text-red-500">*</span>
-                    </label>
-                    <input type="number" id="voltage" step="0.1" min="0" max="50"
-                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white"
-                        placeholder="12, 24, 48, 50" required>
-                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- System Voltage -->
+                    <div>
+                        <label for="voltage" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                            <span data-i18n="systemVoltage">System Voltage (V)</span> <span class="text-red-500"
+                                aria-label="required">*</span>
+                        </label>
+                        <input type="number" id="voltage" name="voltage" step="0.1" min="0" aria-required="true"
+                            aria-describedby="voltage-desc"
+                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white"
+                            placeholder="12, 24, 48, 50" required>
+                        <span id="voltage-desc" class="sr-only">Enter system voltage in volts, maximum 50V</span>
+                    </div>
 
-                <!-- Current -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                        <span data-i18n="current">Current (A)</span> <span class="text-red-500">*</span>
-                    </label>
-                    <input type="number" id="current" step="0.1" min="0"
-                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white"
-                        placeholder="10.0" required>
-                </div>
+                    <!-- Current -->
+                    <div>
+                        <label for="current" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                            <span data-i18n="current">Current (A)</span> <span class="text-red-500"
+                                aria-label="required">*</span>
+                        </label>
+                        <input type="number" id="current" name="current" step="0.1" min="0" aria-required="true"
+                            aria-describedby="current-desc"
+                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white"
+                            placeholder="10.0" required>
+                        <span id="current-desc" class="sr-only">Enter current in amperes</span>
+                    </div>
 
-                <!-- Cable Length -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                        <span data-i18n="cableLength">Cable Length (m)</span> <span class="text-red-500">*</span>
-                    </label>
-                    <input type="number" id="length" step="0.1" min="0"
-                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white"
-                        placeholder="5.0" required>
-                </div>
+                    <!-- Cable Length -->
+                    <div>
+                        <label for="length" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                            <span data-i18n="cableLength">Cable Length (m)</span> <span class="text-red-500"
+                                aria-label="required">*</span>
+                        </label>
+                        <input type="number" id="length" name="length" step="0.1" min="0" aria-required="true"
+                            aria-describedby="length-desc"
+                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white"
+                            placeholder="5.0" required>
+                        <span id="length-desc" class="sr-only">Enter cable length in meters</span>
+                    </div>
 
-                <!-- Max Voltage Drop -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-                        data-i18n="maxVoltageDrop">Max Voltage Drop (%)</label>
-                    <input type="number" id="voltageDrop" step="0.1" min="0" max="10" value="3.0"
-                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white"
-                        placeholder="3.0">
-                </div>
+                    <!-- Max Voltage Drop -->
+                    <div>
+                        <label for="voltageDrop" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                            data-i18n="maxVoltageDrop">Max Voltage Drop (%)</label>
+                        <input type="number" id="voltageDrop" name="voltageDrop" step="0.1" min="0" max="10" value="3.0"
+                            aria-describedby="voltageDrop-desc"
+                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white"
+                            placeholder="3.0">
+                        <span id="voltageDrop-desc" class="sr-only">Optional: Maximum allowed voltage drop percentage,
+                            default is 3%</span>
+                    </div>
 
-                <!-- Ambient Temperature -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-                        data-i18n="ambientTemperature">Ambient Temperature</label>
-                    <div class="flex gap-2">
-                        <input type="number" id="temperature" step="0.1" value="20.0"
-                            class="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white"
-                            placeholder="20.0">
-                        <select id="tempUnit"
-                            class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white">
-                            <option value="C">°C</option>
-                            <option value="F">°F</option>
+                    <!-- Ambient Temperature -->
+                    <div>
+                        <label for="temperature" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                            data-i18n="ambientTemperature">Ambient Temperature</label>
+                        <div class="flex gap-2">
+                            <input type="number" id="temperature" name="temperature" step="0.1" value="20.0"
+                                aria-label="Ambient temperature value"
+                                class="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white"
+                                placeholder="20.0">
+                            <label for="tempUnit" class="sr-only">Temperature unit</label>
+                            <select id="tempUnit" name="tempUnit" aria-label="Temperature unit"
+                                class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white">
+                                <option value="C">°C</option>
+                                <option value="F">°F</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Round Trip -->
+                    <div>
+                        <label for="roundTrip" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                            data-i18n="lengthType">Length Type</label>
+                        <select id="roundTrip" name="roundTrip"
+                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white">
+                            <option value="false">One-way</option>
+                            <option value="true">Round trip</option>
+                        </select>
+                    </div>
+
+                    <!-- Material -->
+                    <div>
+                        <label for="material" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                            data-i18n="cableMaterial">Cable Material</label>
+                        <select id="material" name="material"
+                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white">
+                            <option value="copper">Copper</option>
+                            <option value="aluminum">Aluminum</option>
+                        </select>
+                    </div>
+
+                    <!-- Installation Method -->
+                    <div>
+                        <label for="installation"
+                            class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                            data-i18n="installationMethod">Installation Method</label>
+                        <select id="installation" name="installation"
+                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white">
+                            <option value="air">In Air (best cooling)</option>
+                            <option value="conduit">In Conduit (+10°C)</option>
+                            <option value="isolated">Isolated/Insulated (+20°C)</option>
+                        </select>
+                    </div>
+
+                    <!-- Wire Type -->
+                    <div>
+                        <label for="wireType" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                            data-i18n="wireType">Wire Type</label>
+                        <select id="wireType" name="wireType"
+                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white">
+                            <option value="flry">FLRY (105°C max)</option>
+                            <option value="flry-a">FLRY-A (105°C max)</option>
+                            <option value="flry-b">FLRY-B (105°C max)</option>
+                            <option value="thhn">THHN (90°C max)</option>
+                            <option value="thwn">THWN (75°C max)</option>
+                            <option value="xlpe">XLPE (90°C max)</option>
+                            <option value="pvc">PVC (70°C max)</option>
+                            <option value="silicon">Silicone (200°C max)</option>
+                            <option value="generic" selected>Generic (90°C max)</option>
                         </select>
                     </div>
                 </div>
 
-                <!-- Round Trip -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-                        data-i18n="lengthType">Length Type</label>
-                    <select id="roundTrip"
-                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white">
-                        <option value="false">One-way</option>
-                        <option value="true">Round trip</option>
-                    </select>
-                </div>
+                <button onclick="calculate()" id="calculateBtn" type="button" aria-label="Calculate cable size"
+                    class="mt-6 w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md transition duration-200 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
+                    data-i18n="calculate">
+                    Calculate
+                </button>
+            </section>
 
-                <!-- Material -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-                        data-i18n="cableMaterial">Cable Material</label>
-                    <select id="material"
-                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white">
-                        <option value="copper">Copper</option>
-                        <option value="aluminum">Aluminum</option>
-                    </select>
-                </div>
+            <!-- Results Section -->
+            <section id="results" class="hidden bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6"
+                aria-labelledby="results-heading" aria-live="polite" aria-atomic="true">
+                <h2 id="results-heading" class="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-200"
+                    data-i18n="calculationResults">
+                    Calculation Results</h2>
 
-                <!-- Installation Method -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-                        data-i18n="installationMethod">Installation Method</label>
-                    <select id="installation"
-                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white">
-                        <option value="air">In Air (best cooling)</option>
-                        <option value="conduit">In Conduit (+10°C)</option>
-                        <option value="isolated">Isolated/Insulated (+20°C)</option>
-                    </select>
-                </div>
+                <!-- Screen reader announcement region -->
+                <div id="sr-announcement" class="sr-only" aria-live="polite" aria-atomic="true"></div>
 
-                <!-- Wire Type -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-                        data-i18n="wireType">Wire Type</label>
-                    <select id="wireType"
-                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white">
-                        <option value="flry">FLRY (105°C max)</option>
-                        <option value="flry-a">FLRY-A (105°C max)</option>
-                        <option value="flry-b">FLRY-B (105°C max)</option>
-                        <option value="thhn">THHN (90°C max)</option>
-                        <option value="thwn">THWN (75°C max)</option>
-                        <option value="xlpe">XLPE (90°C max)</option>
-                        <option value="pvc">PVC (70°C max)</option>
-                        <option value="silicon">Silicone (200°C max)</option>
-                        <option value="generic" selected>Generic (90°C max)</option>
-                    </select>
-                </div>
-            </div>
-
-            <button onclick="calculate()" id="calculateBtn"
-                class="mt-6 w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md transition duration-200 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
-                data-i18n="calculate">
-                Calculate
-            </button>
-        </div>
-
-        <!-- Results Section -->
-        <div id="results" class="hidden bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-            <h2 class="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-200" data-i18n="calculationResults">
-                Calculation Results</h2>
-
-            <!-- Input Summary -->
-            <div class="mb-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                <h3 class="font-semibold text-gray-800 dark:text-gray-200 mb-3" data-i18n="inputParams">Input Parameters
-                </h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
-                    <div><span class="text-gray-600 dark:text-gray-400" data-i18n="systemVoltageLabel">System
-                            Voltage:</span> <span id="result-voltage"
-                            class="font-semibold text-gray-800 dark:text-gray-200"></span></div>
-                    <div><span class="text-gray-600 dark:text-gray-400" data-i18n="currentLabel">Current:</span> <span
-                            id="result-current" class="font-semibold text-gray-800 dark:text-gray-200"></span></div>
-                    <div><span class="text-gray-600 dark:text-gray-400" data-i18n="cableLengthLabel">Cable
-                            Length:</span> <span id="result-length"
-                            class="font-semibold text-gray-800 dark:text-gray-200"></span></div>
-                    <div><span class="text-gray-600 dark:text-gray-400" data-i18n="maxVoltageDropLabel">Max Voltage
-                            Drop:</span> <span id="result-drop"
-                            class="font-semibold text-gray-800 dark:text-gray-200"></span></div>
-                    <div><span class="text-gray-600 dark:text-gray-400" data-i18n="materialLabel">Material:</span> <span
-                            id="result-material" class="font-semibold text-gray-800 dark:text-gray-200"></span></div>
-                    <div><span class="text-gray-600 dark:text-gray-400" data-i18n="wireTypeLabel">Wire Type:</span>
-                        <span id="result-wiretype" class="font-semibold text-gray-800 dark:text-gray-200"></span>
-                    </div>
-                    <div><span class="text-gray-600 dark:text-gray-400"
-                            data-i18n="installationLabel">Installation:</span> <span id="result-installation"
-                            class="font-semibold text-gray-800 dark:text-gray-200"></span>
-                    </div>
-                    <div><span class="text-gray-600 dark:text-gray-400" data-i18n="ambientTempLabel">Ambient
-                            Temp:</span> <span id="result-ambient"
-                            class="font-semibold text-gray-800 dark:text-gray-200"></span></div>
-                    <div><span class="text-gray-600 dark:text-gray-400" data-i18n="effectiveTempLabel">Effective
-                            Temp:</span> <span id="result-effective-temp"
-                            class="font-semibold text-gray-800 dark:text-gray-200"></span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Warning -->
-            <div id="warning" class="hidden mb-4 p-4 rounded-lg"></div>
-
-            <!-- Required Size -->
-            <div class="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
-                <h3 class="font-semibold text-blue-900 dark:text-blue-200 mb-3" data-i18n="requiredCableSize">Required
-                    Cable Size</h3>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div>
-                        <span class="text-sm text-blue-700 dark:text-blue-300"
-                            data-i18n="crossSectionalArea">Cross-Sectional Area:</span>
-                        <div class="text-2xl font-bold text-blue-900 dark:text-blue-100" id="result-area"></div>
-                    </div>
-                    <div>
-                        <span class="text-sm text-blue-700 dark:text-blue-300" data-i18n="diameter">Diameter:</span>
-                        <div class="text-2xl font-bold text-blue-900 dark:text-blue-100" id="result-diameter"></div>
-                    </div>
-                    <div>
-                        <span class="text-sm text-blue-700 dark:text-blue-300" data-i18n="cableWeight">Cable
-                            Weight:</span>
-                        <div class="text-2xl font-bold text-blue-900 dark:text-blue-100" id="result-weight"></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Recommended Sizes -->
-            <div
-                class="mb-6 p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
-                <h3 class="font-semibold text-green-900 dark:text-green-200 mb-3" data-i18n="recommendedStandardSizes">
-                    Recommended Standard Sizes</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <span class="text-sm text-green-700 dark:text-green-300" data-i18n="metric">Metric:</span>
-                        <div class="text-xl font-bold text-green-900 dark:text-green-100" id="result-metric"></div>
-                        <span class="text-xs text-green-600 dark:text-green-400" id="result-metric-diff"></span>
-                        <div class="text-sm text-green-700 dark:text-green-300 mt-1" id="result-metric-weight"></div>
-                    </div>
-                    <div>
-                        <span class="text-sm text-green-700 dark:text-green-300" data-i18n="awg">AWG:</span>
-                        <div class="text-xl font-bold text-green-900 dark:text-green-100" id="result-awg"></div>
-                        <span class="text-xs text-green-600 dark:text-green-400" id="result-awg-diff"></span>
-                        <div class="text-sm text-green-700 dark:text-green-300 mt-1" id="result-awg-weight"></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Voltage Drop with Recommended Sizes -->
-            <div
-                class="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-800">
-                <h3 class="font-semibold text-purple-900 dark:text-purple-200 mb-3" data-i18n="voltageDropRecommended">
-                    Voltage Drop with Recommended Sizes</h3>
-                <div class="space-y-2">
-                    <div>
-                        <span class="text-sm text-purple-700 dark:text-purple-300" id="result-drop-metric-label"></span>
-                        <div class="text-lg font-semibold text-purple-900 dark:text-purple-100" id="result-drop-metric">
+                <!-- Input Summary -->
+                <div class="mb-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                    <h3 class="font-semibold text-gray-800 dark:text-gray-200 mb-3" data-i18n="inputParams">Input
+                        Parameters
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
+                        <div><span class="text-gray-600 dark:text-gray-400" data-i18n="systemVoltageLabel">System
+                                Voltage:</span> <span id="result-voltage"
+                                class="font-semibold text-gray-800 dark:text-gray-200"></span></div>
+                        <div><span class="text-gray-600 dark:text-gray-400" data-i18n="currentLabel">Current:</span>
+                            <span id="result-current" class="font-semibold text-gray-800 dark:text-gray-200"></span>
                         </div>
-                    </div>
-                    <div>
-                        <span class="text-sm text-purple-700 dark:text-purple-300" id="result-drop-awg-label"></span>
-                        <div class="text-lg font-semibold text-purple-900 dark:text-purple-100" id="result-drop-awg">
+                        <div><span class="text-gray-600 dark:text-gray-400" data-i18n="cableLengthLabel">Cable
+                                Length:</span> <span id="result-length"
+                                class="font-semibold text-gray-800 dark:text-gray-200"></span></div>
+                        <div><span class="text-gray-600 dark:text-gray-400" data-i18n="maxVoltageDropLabel">Max Voltage
+                                Drop:</span> <span id="result-drop"
+                                class="font-semibold text-gray-800 dark:text-gray-200"></span></div>
+                        <div><span class="text-gray-600 dark:text-gray-400" data-i18n="materialLabel">Material:</span>
+                            <span id="result-material" class="font-semibold text-gray-800 dark:text-gray-200"></span>
+                        </div>
+                        <div><span class="text-gray-600 dark:text-gray-400" data-i18n="wireTypeLabel">Wire Type:</span>
+                            <span id="result-wiretype" class="font-semibold text-gray-800 dark:text-gray-200"></span>
+                        </div>
+                        <div><span class="text-gray-600 dark:text-gray-400"
+                                data-i18n="installationLabel">Installation:</span> <span id="result-installation"
+                                class="font-semibold text-gray-800 dark:text-gray-200"></span>
+                        </div>
+                        <div><span class="text-gray-600 dark:text-gray-400" data-i18n="ambientTempLabel">Ambient
+                                Temp:</span> <span id="result-ambient"
+                                class="font-semibold text-gray-800 dark:text-gray-200"></span></div>
+                        <div><span class="text-gray-600 dark:text-gray-400" data-i18n="effectiveTempLabel">Effective
+                                Temp:</span> <span id="result-effective-temp"
+                                class="font-semibold text-gray-800 dark:text-gray-200"></span>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
 
-        <!-- Footer -->
-        <div class="mt-8 text-center text-sm text-gray-600 dark:text-gray-400">
-            <p>⚠️ <strong data-i18n="safetyWarning">Safety Warning:</strong> <span data-i18n="safetyText">Always consult
-                    with a qualified electrician or electrical engineer for critical applications.</span></p>
-            <p class="mt-2" data-i18n="safetyNote">This tool provides calculations for voltage drop only and does not
-                replace professional engineering judgment.</p>
-        </div>
+                <!-- Warning -->
+                <div id="warning" class="hidden mb-4 p-4 rounded-lg" role="alert" aria-live="assertive"></div>
+
+                <!-- Required Size -->
+                <div
+                    class="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                    <h3 class="font-semibold text-blue-900 dark:text-blue-200 mb-3" data-i18n="requiredCableSize">
+                        Required
+                        Cable Size</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <span class="text-sm text-blue-700 dark:text-blue-300"
+                                data-i18n="crossSectionalArea">Cross-Sectional Area:</span>
+                            <div class="text-2xl font-bold text-blue-900 dark:text-blue-100" id="result-area"></div>
+                        </div>
+                        <div>
+                            <span class="text-sm text-blue-700 dark:text-blue-300" data-i18n="diameter">Diameter:</span>
+                            <div class="text-2xl font-bold text-blue-900 dark:text-blue-100" id="result-diameter"></div>
+                        </div>
+                        <div>
+                            <span class="text-sm text-blue-700 dark:text-blue-300" data-i18n="cableWeight">Cable
+                                Weight:</span>
+                            <div class="text-2xl font-bold text-blue-900 dark:text-blue-100" id="result-weight"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recommended Sizes -->
+                <div class="mb-6 p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800"
+                    role="region" aria-labelledby="recommended-heading">
+                    <h3 id="recommended-heading" class="font-semibold text-green-900 dark:text-green-200 mb-3"
+                        data-i18n="recommendedStandardSizes">
+                        Recommended Standard Sizes</h3>
+                    <dl class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <dt class="text-sm text-green-700 dark:text-green-300" data-i18n="metric">Metric:</dt>
+                            <dd class="text-xl font-bold text-green-900 dark:text-green-100" id="result-metric"
+                                aria-label="Recommended metric size"></dd>
+                            <dd class="text-xs text-green-600 dark:text-green-400" id="result-metric-diff"></dd>
+                            <dd class="text-sm text-green-700 dark:text-green-300 mt-1" id="result-metric-weight"></dd>
+                        </div>
+                        <div>
+                            <dt class="text-sm text-green-700 dark:text-green-300" data-i18n="awg">AWG:</dt>
+                            <dd class="text-xl font-bold text-green-900 dark:text-green-100" id="result-awg"
+                                aria-label="Recommended AWG size"></dd>
+                            <dd class="text-xs text-green-600 dark:text-green-400" id="result-awg-diff"></dd>
+                            <dd class="text-sm text-green-700 dark:text-green-300 mt-1" id="result-awg-weight"></dd>
+                        </div>
+                    </dl>
+                </div>
+
+                <!-- Voltage Drop with Recommended Sizes -->
+                <div class="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-800"
+                    role="region" aria-labelledby="voltage-drop-heading">
+                    <h3 id="voltage-drop-heading" class="font-semibold text-purple-900 dark:text-purple-200 mb-3"
+                        data-i18n="voltageDropRecommended">
+                        Voltage Drop with Recommended Sizes</h3>
+                    <dl class="space-y-2">
+                        <div>
+                            <dt class="text-sm text-purple-700 dark:text-purple-300" id="result-drop-metric-label"></dt>
+                            <dd class="text-lg font-semibold text-purple-900 dark:text-purple-100"
+                                id="result-drop-metric" aria-label="Voltage drop with metric size">
+                            </dd>
+                        </div>
+                        <div>
+                            <dt class="text-sm text-purple-700 dark:text-purple-300" id="result-drop-awg-label"></dt>
+                            <dd class="text-lg font-semibold text-purple-900 dark:text-purple-100" id="result-drop-awg"
+                                aria-label="Voltage drop with AWG size">
+                            </dd>
+                        </div>
+                    </dl>
+                </div>
+
+                <!-- Safety Warning -->
+                <div class="mt-6 p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800"
+                    role="alert">
+                    <div class="font-semibold text-yellow-800 dark:text-yellow-200 mb-2" data-i18n="safetyWarning">
+                        Safety
+                        Warning:</div>
+                    <div class="text-sm text-yellow-700 dark:text-yellow-300" data-i18n="safetyText">Always consult with
+                        a
+                        qualified electrician or electrical engineer for critical applications.</div>
+                    <div class="text-xs text-yellow-600 dark:text-yellow-400 mt-2" data-i18n="safetyNote">This tool
+                        provides
+                        calculations for voltage drop only and does not replace professional engineering judgment.</div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <div class="mt-8 text-center text-sm text-gray-600 dark:text-gray-400">
+        <p>⚠️ <strong data-i18n="safetyWarning">Safety Warning:</strong> <span data-i18n="safetyText">Always consult
+                with a qualified electrician or electrical engineer for critical applications.</span></p>
+        <p class="mt-2" data-i18n="safetyNote">This tool provides calculations for voltage drop only and does not
+            replace professional engineering judgment.</p>
+    </div>
     </div>
 
     <script>
@@ -324,7 +405,7 @@
                 safetyWarning: "Safety Warning:",
                 safetyText: "Always consult with a qualified electrician or electrical engineer for critical applications.",
                 safetyNote: "This tool provides calculations for voltage drop only and does not replace professional engineering judgment.",
-                errorInvalidVoltage: "Error: Invalid voltage. Please enter a value between 0 and 50V.",
+                errorInvalidVoltage: "Error: Invalid voltage. Please enter a value between 0 and {maxVoltage}V.",
                 errorInvalidCurrent: "Error: Invalid current. Please enter a positive value.",
                 errorInvalidLength: "Error: Invalid length. Please enter a positive value.",
                 warningTempExceeds: "WARNING: Effective operating temperature ({temp}°C) exceeds {wireType} maximum rating ({maxTemp}°C)! Wire insulation may fail.",
@@ -379,7 +460,7 @@
                 safetyWarning: "Sicherheitshinweis:",
                 safetyText: "Konsultieren Sie für kritische Anwendungen immer einen qualifizierten Elektriker oder Elektroingenieur.",
                 safetyNote: "Dieses Tool bietet nur Berechnungen für den Spannungsabfall und ersetzt nicht das professionelle Ingenieururteil.",
-                errorInvalidVoltage: "Fehler: Ungültige Spannung. Bitte geben Sie einen Wert zwischen 0 und 50V ein.",
+                errorInvalidVoltage: "Fehler: Ungültige Spannung. Bitte geben Sie einen Wert zwischen 0 und {maxVoltage}V ein.",
                 errorInvalidCurrent: "Fehler: Ungültiger Strom. Bitte geben Sie einen positiven Wert ein.",
                 errorInvalidLength: "Fehler: Ungültige Länge. Bitte geben Sie einen positiven Wert ein.",
                 warningTempExceeds: "WARNUNG: Effektive Betriebstemperatur ({temp}°C) überschreitet die maximale Bewertung von {wireType} ({maxTemp}°C)! Die Drahtisolierung kann versagen.",
@@ -434,7 +515,7 @@
                 safetyWarning: "Avertissement de sécurité:",
                 safetyText: "Consultez toujours un électricien qualifié ou un ingénieur électricien pour les applications critiques.",
                 safetyNote: "Cet outil fournit uniquement des calculs pour la chute de tension et ne remplace pas le jugement d'ingénierie professionnel.",
-                errorInvalidVoltage: "Erreur: Tension invalide. Veuillez entrer une valeur entre 0 et 50V.",
+                errorInvalidVoltage: "Erreur: Tension invalide. Veuillez entrer une valeur entre 0 et {maxVoltage}V.",
                 errorInvalidCurrent: "Erreur: Courant invalide. Veuillez entrer une valeur positive.",
                 errorInvalidLength: "Erreur: Longueur invalide. Veuillez entrer une valeur positive.",
                 warningTempExceeds: "AVERTISSEMENT: La température de fonctionnement effective ({temp}°C) dépasse la cote maximale de {wireType} ({maxTemp}°C)! L'isolation du fil peut échouer.",
@@ -489,7 +570,7 @@
                 safetyWarning: "Säkerhetsvarning:",
                 safetyText: "Konsultera alltid en kvalificerad elektriker eller elektroingenjör för kritiska tillämpningar.",
                 safetyNote: "Detta verktyg tillhandahåller endast beräkningar för spänningsfall och ersätter inte professionell ingenjörsbedömning.",
-                errorInvalidVoltage: "Fel: Ogiltig spänning. Ange ett värde mellan 0 och 50V.",
+                errorInvalidVoltage: "Fel: Ogiltig spänning. Ange ett värde mellan 0 och {maxVoltage}V.",
                 errorInvalidCurrent: "Fel: Ogiltig ström. Ange ett positivt värde.",
                 errorInvalidLength: "Fel: Ogiltig längd. Ange ett positivt värde.",
                 warningTempExceeds: "VARNING: Effektiv driftstemperatur ({temp}°C) överskrider {wireType} maximala betyg ({maxTemp}°C)! Trådisolering kan misslyckas.",
@@ -549,11 +630,22 @@
             if (btn) btn.textContent = t('calculate');
         }
 
+        // Constants
+        const MAX_VOLTAGE = 50.0; // Maximum system voltage (V)
+        const COPPER_RESISTIVITY_20C = 0.0175; // Ω·mm²/m
+        const ALUMINUM_RESISTIVITY_20C = 0.0283; // Ω·mm²/m
+        const COPPER_TEMP_COEFFICIENT = 0.00393; // per °C
+        const ALUMINUM_TEMP_COEFFICIENT = 0.00403; // per °C
+        const REFERENCE_TEMP = 20.0; // °C
+
         // Initialize language on page load
         document.addEventListener('DOMContentLoaded', function () {
             // Set language selector
             document.getElementById('language').value = currentLanguage;
             document.documentElement.lang = currentLanguage;
+
+            // Set max voltage attribute
+            document.getElementById('voltage').setAttribute('max', MAX_VOLTAGE);
 
             // Update translations
             updateTranslations();
@@ -568,13 +660,6 @@
                 });
             });
         });
-
-        // Constants
-        const COPPER_RESISTIVITY_20C = 0.0175; // Ω·mm²/m
-        const ALUMINUM_RESISTIVITY_20C = 0.0283; // Ω·mm²/m
-        const COPPER_TEMP_COEFFICIENT = 0.00393; // per °C
-        const ALUMINUM_TEMP_COEFFICIENT = 0.00403; // per °C
-        const REFERENCE_TEMP = 20.0; // °C
 
         // Material densities (kg/m³)
         const COPPER_DENSITY = 8960; // kg/m³
@@ -754,8 +839,8 @@
             const wireTypeKey = document.getElementById('wireType').value;
 
             // Validation
-            if (!voltage || voltage <= 0 || voltage > 50) {
-                alert(t('errorInvalidVoltage'));
+            if (!voltage || voltage <= 0 || voltage > MAX_VOLTAGE) {
+                alert(t('errorInvalidVoltage', { maxVoltage: MAX_VOLTAGE }));
                 return;
             }
             if (!current || current <= 0) {
@@ -863,8 +948,20 @@
             document.getElementById('result-drop-awg').textContent = `${actualDropAWG.toFixed(2)} V (${actualDropPercentAWG.toFixed(2)}%)`;
 
             // Show results section
-            document.getElementById('results').classList.remove('hidden');
-            document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            const resultsSection = document.getElementById('results');
+            resultsSection.classList.remove('hidden');
+
+            // Announce results to screen readers
+            const srAnnouncement = document.getElementById('sr-announcement');
+            const announcement = `${t('calculationResults')}. ${t('requiredCableSize')}: ${requiredArea.toFixed(2)} ${t('crossSectionalArea')}. ${t('recommendedStandardSizes')}: ${t('metric')} ${metricResult.size.toFixed(2)} mm², ${t('awg')} ${awgResult.label}.`;
+            srAnnouncement.textContent = announcement;
+
+            // Focus on results section for keyboard users and scroll into view
+            resultsSection.setAttribute('tabindex', '-1');
+            setTimeout(() => {
+                resultsSection.focus();
+                resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 100);
         }
 
     </script>
