@@ -1,5 +1,10 @@
 package main
 
+// TUI (Terminal User Interface) implementation for DC Cable Diameter Calculator
+//
+// This code has been developed with AI assistance.
+// See main.go and README.md for full disclaimer.
+
 import (
 	"fmt"
 	"io"

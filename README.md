@@ -2,6 +2,8 @@
 
 A command-line tool for calculating the required cable cross-sectional area and diameter for DC electrical systems (12V, 24V, 48V, up to 50V). The calculator determines the appropriate cable size based on voltage drop requirements.
 
+> **Note:** This code has been developed with AI assistance. While the calculations and logic have been reviewed, users should verify results for critical applications.
+
 ## Features
 
 - ✅ Supports DC systems from 12V to 50V
@@ -219,6 +221,14 @@ The program validates that the calculated effective operating temperature does n
 - Temperature derating factors
 - Local electrical codes and regulations
 - Safety margins for your specific application
+
+## AI-Assisted Development
+
+This software has been developed with AI assistance. While the code has been reviewed and tested, users are advised to:
+- Review the source code before using in production environments
+- Verify calculations independently for critical applications
+- Report any issues or inaccuracies found
+- Understand that AI-generated code may contain errors and should be validated
 
 ## Troubleshooting
 
