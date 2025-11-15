@@ -10,6 +10,10 @@ A command-line tool for calculating the required cable cross-sectional area and 
 - ✅ Handles one-way and round-trip cable lengths
 - ✅ Provides recommendations in both metric (mm²) and AWG sizes
 - ✅ Shows actual voltage drop with recommended cable sizes
+- ✅ **Interactive TUI mode** with step-by-step form interface
+- ✅ Temperature compensation (Celsius/Fahrenheit)
+- ✅ Installation method support (air, conduit, isolated)
+- ✅ Wire type selection with temperature validation
 
 ## Installation
 
@@ -22,20 +26,41 @@ A command-line tool for calculating the required cable cross-sectional area and 
 ```bash
 git clone <repository-url>
 cd Kabelquerschnitt
-go build -o cablecalc main.go
+go build -o cablecalc .
 ```
 
 Or run directly:
 
 ```bash
-go run main.go
+go run .
 ```
+
+**Note:** The application consists of `main.go` and `main_tui.go`. Both files must be included when building.
 
 ## Usage
 
-### Basic Usage
+The application supports two modes: **CLI mode** (default) and **TUI mode** (interactive terminal interface).
 
-Run the program:
+### TUI Mode (Recommended)
+
+Run with the `--tui` or `-t` flag for an interactive terminal user interface:
+
+```bash
+./cablecalc --tui
+# or
+./cablecalc -t
+```
+
+The TUI provides:
+- **Step-by-step form** with field navigation (Tab/Enter to move forward, Shift+Tab/Up to go back)
+- **Interactive lists** for material, installation method, and wire type selection
+- **Real-time validation** with error messages
+- **Color-coded results** with warnings and recommendations
+- **Keyboard shortcuts**: `q` to quit, `Esc` to go back, `r` to restart after viewing results
+
+### CLI Mode
+
+Run without flags for the traditional command-line interface:
 
 ```bash
 ./cablecalc

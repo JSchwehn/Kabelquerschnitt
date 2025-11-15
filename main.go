@@ -7,6 +7,8 @@ import (
 	"os"
 	"strconv"
 	"strings"
+
+	tea "github.com/charmbracelet/bubbletea"
 )
 
 const (
@@ -287,6 +289,25 @@ func findClosestAWG(requiredArea float64) (string, float64, float64) {
 }
 
 func main() {
+	// Check for TUI mode flag
+	if len(os.Args) > 1 && (os.Args[1] == "--tui" || os.Args[1] == "-t") {
+		runTUI()
+		return
+	}
+
+	runCLI()
+}
+
+func runTUI() {
+	m := initialModel()
+	p := tea.NewProgram(m, tea.WithAltScreen())
+	if _, err := p.Run(); err != nil {
+		fmt.Printf("Error running TUI: %v\n", err)
+		os.Exit(1)
+	}
+}
+
+func runCLI() {
 	reader := bufio.NewReader(os.Stdin)
 
 	fmt.Println("=== DC Cable Diameter Calculator ===")

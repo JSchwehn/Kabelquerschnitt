@@ -14,16 +14,47 @@ This document provides technical details for developers working on the DC Cable 
 
 ## Architecture
 
-The application is a simple command-line tool written in Go. It follows a straightforward structure:
+The application supports both CLI (command-line interface) and TUI (terminal user interface) modes. It follows a modular structure:
 
 ```
 Kabelquerschnitt/
-├── main.go          # Main application code
+├── main.go          # Main application code (CLI mode + entry point)
+├── main_tui.go      # TUI implementation using Bubble Tea
 ├── main_test.go     # Test suite
 ├── go.mod           # Go module definition
 ├── README.md        # User documentation
-└── DEVELOPER.md     # This file
+├── DEVELOPER.md     # This file
+└── DOCUMENTATION.md # Documentation maintenance guide
 ```
+
+### Application Modes
+
+**CLI Mode** (default):
+- Traditional command-line interface
+- Prompts user for input sequentially
+- Suitable for scripting and automation
+
+**TUI Mode** (`--tui` or `-t` flag):
+- Interactive terminal user interface using [Bubble Tea](https://github.com/charmbracelet/bubbletea)
+- Multi-step form with navigation
+- Interactive lists for selections
+- Real-time validation and error display
+- Color-coded output with styling via [Lipgloss](https://github.com/charmbracelet/lipgloss)
+
+### TUI Architecture
+
+The TUI implementation follows the Model-Update-View (MVU) pattern used by Bubble Tea:
+
+- **Model**: Represents application state (inputs, selections, results, current step)
+- **Update**: Handles user input and state transitions
+- **View**: Renders the UI based on current state
+
+**State Management:**
+- `step`: Tracks current form step (0: inputs, 1: material, 2: installation, 3: wire type, 4: round trip, 5: results)
+- `inputs`: Array of text input fields
+- `selectedMaterial`, `selectedInstallation`, `selectedWireType`: Indices for list selections
+- `results`: Calculated results structure
+- `err`, `warning`: Error and warning messages
 
 ## Calculation Methodology
 
@@ -399,9 +430,31 @@ go test -cover
 
 # Run with race detector
 go test -race
+
+# Run specific test
+go test -v -run TestCalculateCableArea
 ```
 
 ### Test Coverage
+
+The test suite covers:
+- Core calculation functions (`calculateCableArea`, `areaToDiameter`)
+- Temperature compensation (`calculateResistivityAtTemp`, `calculateEffectiveTemp`)
+- Temperature conversion (`fahrenheitToCelsius`, `celsiusToFahrenheit`)
+- Standard size selection (`findClosestMetricSize`, `findClosestAWG`)
+- Wire type validation (`ValidateWireTemperature`)
+- Material properties
+- Integration scenarios
+- Edge cases
+
+### TUI Testing
+
+TUI components are tested indirectly through:
+- Unit tests for calculation functions (used by TUI)
+- Integration tests covering full calculation flows
+- Manual testing recommended for UI interactions
+
+**Note:** Bubble Tea TUI testing typically requires manual testing or specialized testing frameworks. The calculation logic used by the TUI is fully covered by unit tests.
 
 The test suite (`main_test.go`) includes:
 
