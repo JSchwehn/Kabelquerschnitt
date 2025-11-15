@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,28 +14,30 @@
         }
     </style>
 </head>
+
 <body class="bg-gray-50 dark:bg-gray-900 min-h-screen py-8 px-4">
     <div class="max-w-4xl mx-auto">
         <!-- Header -->
         <div class="bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg shadow-lg p-6 mb-8">
             <h1 class="text-3xl font-bold mb-2">DC Cable Diameter Calculator</h1>
-            <p class="text-purple-100">Calculate required cable cross-sectional area and diameter for DC electrical systems</p>
+            <p class="text-purple-100">Calculate required cable cross-sectional area and diameter for DC electrical
+                systems</p>
             <p class="text-sm text-purple-200 mt-2">Supports 12V, 24V, 48V, 50V DC systems</p>
         </div>
 
         <!-- Calculator Form -->
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-6">
             <h2 class="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-200">Input Parameters</h2>
-            
+
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <!-- System Voltage -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                         System Voltage (V) <span class="text-red-500">*</span>
                     </label>
-                    <input type="number" id="voltage" step="0.1" min="0" max="50" 
-                           class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white"
-                           placeholder="12, 24, 48, 50" required>
+                    <input type="number" id="voltage" step="0.1" min="0" max="50"
+                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white"
+                        placeholder="12, 24, 48, 50" required>
                 </div>
 
                 <!-- Current -->
@@ -42,9 +45,9 @@
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                         Current (A) <span class="text-red-500">*</span>
                     </label>
-                    <input type="number" id="current" step="0.1" min="0" 
-                           class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white"
-                           placeholder="10.0" required>
+                    <input type="number" id="current" step="0.1" min="0"
+                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white"
+                        placeholder="10.0" required>
                 </div>
 
                 <!-- Cable Length -->
@@ -52,9 +55,9 @@
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                         Cable Length (m) <span class="text-red-500">*</span>
                     </label>
-                    <input type="number" id="length" step="0.1" min="0" 
-                           class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white"
-                           placeholder="5.0" required>
+                    <input type="number" id="length" step="0.1" min="0"
+                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white"
+                        placeholder="5.0" required>
                 </div>
 
                 <!-- Max Voltage Drop -->
@@ -63,8 +66,8 @@
                         Max Voltage Drop (%)
                     </label>
                     <input type="number" id="voltageDrop" step="0.1" min="0" max="10" value="3.0"
-                           class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white"
-                           placeholder="3.0">
+                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white"
+                        placeholder="3.0">
                 </div>
 
                 <!-- Ambient Temperature -->
@@ -74,10 +77,10 @@
                     </label>
                     <div class="flex gap-2">
                         <input type="number" id="temperature" step="0.1" value="20.0"
-                               class="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white"
-                               placeholder="20.0">
-                        <select id="tempUnit" 
-                                class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white">
+                            class="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white"
+                            placeholder="20.0">
+                        <select id="tempUnit"
+                            class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white">
                             <option value="C">°C</option>
                             <option value="F">°F</option>
                         </select>
@@ -89,8 +92,8 @@
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                         Length Type
                     </label>
-                    <select id="roundTrip" 
-                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white">
+                    <select id="roundTrip"
+                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white">
                         <option value="false">One-way</option>
                         <option value="true">Round trip</option>
                     </select>
@@ -101,8 +104,8 @@
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                         Cable Material
                     </label>
-                    <select id="material" 
-                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white">
+                    <select id="material"
+                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white">
                         <option value="copper">Copper</option>
                         <option value="aluminum">Aluminum</option>
                     </select>
@@ -113,8 +116,8 @@
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                         Installation Method
                     </label>
-                    <select id="installation" 
-                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white">
+                    <select id="installation"
+                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white">
                         <option value="air">In Air (best cooling)</option>
                         <option value="conduit">In Conduit (+10°C)</option>
                         <option value="isolated">Isolated/Insulated (+20°C)</option>
@@ -126,8 +129,8 @@
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                         Wire Type
                     </label>
-                    <select id="wireType" 
-                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white">
+                    <select id="wireType"
+                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white">
                         <option value="flry">FLRY (105°C max)</option>
                         <option value="flry-a">FLRY-A (105°C max)</option>
                         <option value="flry-b">FLRY-B (105°C max)</option>
@@ -141,8 +144,8 @@
                 </div>
             </div>
 
-            <button onclick="calculate()" 
-                    class="mt-6 w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md transition duration-200 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2">
+            <button onclick="calculate()"
+                class="mt-6 w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md transition duration-200 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2">
                 Calculate
             </button>
         </div>
@@ -150,20 +153,31 @@
         <!-- Results Section -->
         <div id="results" class="hidden bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
             <h2 class="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-200">Calculation Results</h2>
-            
+
             <!-- Input Summary -->
             <div class="mb-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
                 <h3 class="font-semibold text-gray-800 dark:text-gray-200 mb-3">Input Parameters</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
-                    <div><span class="text-gray-600 dark:text-gray-400">System Voltage:</span> <span id="result-voltage" class="font-semibold text-gray-800 dark:text-gray-200"></span></div>
-                    <div><span class="text-gray-600 dark:text-gray-400">Current:</span> <span id="result-current" class="font-semibold text-gray-800 dark:text-gray-200"></span></div>
-                    <div><span class="text-gray-600 dark:text-gray-400">Cable Length:</span> <span id="result-length" class="font-semibold text-gray-800 dark:text-gray-200"></span></div>
-                    <div><span class="text-gray-600 dark:text-gray-400">Max Voltage Drop:</span> <span id="result-drop" class="font-semibold text-gray-800 dark:text-gray-200"></span></div>
-                    <div><span class="text-gray-600 dark:text-gray-400">Material:</span> <span id="result-material" class="font-semibold text-gray-800 dark:text-gray-200"></span></div>
-                    <div><span class="text-gray-600 dark:text-gray-400">Wire Type:</span> <span id="result-wiretype" class="font-semibold text-gray-800 dark:text-gray-200"></span></div>
-                    <div><span class="text-gray-600 dark:text-gray-400">Installation:</span> <span id="result-installation" class="font-semibold text-gray-800 dark:text-gray-200"></span></div>
-                    <div><span class="text-gray-600 dark:text-gray-400">Ambient Temp:</span> <span id="result-ambient" class="font-semibold text-gray-800 dark:text-gray-200"></span></div>
-                    <div><span class="text-gray-600 dark:text-gray-400">Effective Temp:</span> <span id="result-effective-temp" class="font-semibold text-gray-800 dark:text-gray-200"></span></div>
+                    <div><span class="text-gray-600 dark:text-gray-400">System Voltage:</span> <span id="result-voltage"
+                            class="font-semibold text-gray-800 dark:text-gray-200"></span></div>
+                    <div><span class="text-gray-600 dark:text-gray-400">Current:</span> <span id="result-current"
+                            class="font-semibold text-gray-800 dark:text-gray-200"></span></div>
+                    <div><span class="text-gray-600 dark:text-gray-400">Cable Length:</span> <span id="result-length"
+                            class="font-semibold text-gray-800 dark:text-gray-200"></span></div>
+                    <div><span class="text-gray-600 dark:text-gray-400">Max Voltage Drop:</span> <span id="result-drop"
+                            class="font-semibold text-gray-800 dark:text-gray-200"></span></div>
+                    <div><span class="text-gray-600 dark:text-gray-400">Material:</span> <span id="result-material"
+                            class="font-semibold text-gray-800 dark:text-gray-200"></span></div>
+                    <div><span class="text-gray-600 dark:text-gray-400">Wire Type:</span> <span id="result-wiretype"
+                            class="font-semibold text-gray-800 dark:text-gray-200"></span></div>
+                    <div><span class="text-gray-600 dark:text-gray-400">Installation:</span> <span
+                            id="result-installation" class="font-semibold text-gray-800 dark:text-gray-200"></span>
+                    </div>
+                    <div><span class="text-gray-600 dark:text-gray-400">Ambient Temp:</span> <span id="result-ambient"
+                            class="font-semibold text-gray-800 dark:text-gray-200"></span></div>
+                    <div><span class="text-gray-600 dark:text-gray-400">Effective Temp:</span> <span
+                            id="result-effective-temp" class="font-semibold text-gray-800 dark:text-gray-200"></span>
+                    </div>
                 </div>
             </div>
 
@@ -186,7 +200,8 @@
             </div>
 
             <!-- Recommended Sizes -->
-            <div class="mb-6 p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
+            <div
+                class="mb-6 p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
                 <h3 class="font-semibold text-green-900 dark:text-green-200 mb-3">Recommended Standard Sizes</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
@@ -203,16 +218,20 @@
             </div>
 
             <!-- Voltage Drop with Recommended Sizes -->
-            <div class="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-800">
-                <h3 class="font-semibold text-purple-900 dark:text-purple-200 mb-3">Voltage Drop with Recommended Sizes</h3>
+            <div
+                class="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-800">
+                <h3 class="font-semibold text-purple-900 dark:text-purple-200 mb-3">Voltage Drop with Recommended Sizes
+                </h3>
                 <div class="space-y-2">
                     <div>
                         <span class="text-sm text-purple-700 dark:text-purple-300" id="result-drop-metric-label"></span>
-                        <div class="text-lg font-semibold text-purple-900 dark:text-purple-100" id="result-drop-metric"></div>
+                        <div class="text-lg font-semibold text-purple-900 dark:text-purple-100" id="result-drop-metric">
+                        </div>
                     </div>
                     <div>
                         <span class="text-sm text-purple-700 dark:text-purple-300" id="result-drop-awg-label"></span>
-                        <div class="text-lg font-semibold text-purple-900 dark:text-purple-100" id="result-drop-awg"></div>
+                        <div class="text-lg font-semibold text-purple-900 dark:text-purple-100" id="result-drop-awg">
+                        </div>
                     </div>
                 </div>
             </div>
@@ -220,8 +239,10 @@
 
         <!-- Footer -->
         <div class="mt-8 text-center text-sm text-gray-600 dark:text-gray-400">
-            <p>⚠️ <strong>Safety Warning:</strong> Always consult with a qualified electrician or electrical engineer for critical applications.</p>
-            <p class="mt-2">This tool provides calculations for voltage drop only and does not replace professional engineering judgment.</p>
+            <p>⚠️ <strong>Safety Warning:</strong> Always consult with a qualified electrician or electrical engineer
+                for critical applications.</p>
+            <p class="mt-2">This tool provides calculations for voltage drop only and does not replace professional
+                engineering judgment.</p>
         </div>
     </div>
 
@@ -344,34 +365,31 @@
             return 2 * Math.sqrt(area / Math.PI);
         }
 
-        // Find closest metric size
+        // Find smallest metric size that is >= required area (round up)
         function findClosestMetricSize(requiredArea) {
-            let closestSize = standardMetricSizes[0];
-            let minDiff = Math.abs(standardMetricSizes[0] - requiredArea);
+            // Find the smallest standard size that is >= required area
             for (const size of standardMetricSizes) {
-                const diff = Math.abs(size - requiredArea);
-                if (diff < minDiff) {
-                    minDiff = diff;
-                    closestSize = size;
+                if (size >= requiredArea) {
+                    return { size: size, diff: size - requiredArea };
                 }
             }
-            return { size: closestSize, diff: minDiff };
+            // If required area exceeds all standard sizes, return the largest
+            const largestSize = standardMetricSizes[standardMetricSizes.length - 1];
+            return { size: largestSize, diff: requiredArea - largestSize };
         }
 
-        // Find closest AWG size
+        // Find smallest AWG size (largest area) that is >= required area (round up)
         function findClosestAWG(requiredArea) {
-            let closestLabel = awgSizes[0].label;
-            let closestArea = awgSizes[0].area;
-            let minDiff = Math.abs(awgSizes[0].area - requiredArea);
+            // AWG sizes are ordered from smallest to largest area
+            // Find the first AWG size where area >= required area
             for (const awg of awgSizes) {
-                const diff = Math.abs(awg.area - requiredArea);
-                if (diff < minDiff) {
-                    minDiff = diff;
-                    closestLabel = awg.label;
-                    closestArea = awg.area;
+                if (awg.area >= requiredArea) {
+                    return { label: awg.label, area: awg.area, diff: awg.area - requiredArea };
                 }
             }
-            return { label: closestLabel, area: closestArea, diff: minDiff };
+            // If required area exceeds all AWG sizes, return the largest
+            const largestAWG = awgSizes[awgSizes.length - 1];
+            return { label: largestAWG.label, area: largestAWG.area, diff: requiredArea - largestAWG.area };
         }
 
         // Main calculation function
@@ -466,9 +484,13 @@
 
             // Display recommended sizes
             document.getElementById('result-metric').textContent = `${metricResult.size.toFixed(2)} mm²`;
-            document.getElementById('result-metric-diff').textContent = `(difference: ${metricResult.diff.toFixed(2)} mm²)`;
+            document.getElementById('result-metric-diff').textContent = metricResult.diff >= 0
+                ? `(rounded up, oversized by ${metricResult.diff.toFixed(2)} mm²)`
+                : `(largest available, undersized by ${Math.abs(metricResult.diff).toFixed(2)} mm²)`;
             document.getElementById('result-awg').textContent = `AWG ${awgResult.label} (${awgResult.area.toFixed(2)} mm²)`;
-            document.getElementById('result-awg-diff').textContent = `(difference: ${awgResult.diff.toFixed(2)} mm²)`;
+            document.getElementById('result-awg-diff').textContent = awgResult.diff >= 0
+                ? `(rounded up, oversized by ${awgResult.diff.toFixed(2)} mm²)`
+                : `(largest available, undersized by ${Math.abs(awgResult.diff).toFixed(2)} mm²)`;
 
             // Display voltage drops
             document.getElementById('result-drop-metric-label').textContent = `With ${metricResult.size.toFixed(2)} mm²:`;
@@ -482,10 +504,10 @@
         }
 
         // Allow Enter key to trigger calculation
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const inputs = document.querySelectorAll('input, select');
             inputs.forEach(input => {
-                input.addEventListener('keypress', function(e) {
+                input.addEventListener('keypress', function (e) {
                     if (e.key === 'Enter') {
                         calculate();
                     }
@@ -494,5 +516,5 @@
         });
     </script>
 </body>
-</html>
 
+</html>
