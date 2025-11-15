@@ -49,7 +49,7 @@ function updateTranslations() {
 }
 
 // Constants
-const MAX_VOLTAGE = 50.0; // Maximum system voltage (V)
+const MAX_VOLTAGE = 60.0; // Maximum system voltage (V)
 const COPPER_RESISTIVITY_20C = 0.0175; // Ω·mm²/m
 const ALUMINUM_RESISTIVITY_20C = 0.0283; // Ω·mm²/m
 const COPPER_TEMP_COEFFICIENT = 0.00393; // per °C
