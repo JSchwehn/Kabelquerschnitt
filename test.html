@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DC Cable Calculator - Tests</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .test-header {
+            background: #4a5568;
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+        .test-section {
+            margin: 15px 0;
+            padding: 10px;
+            border-left: 4px solid #4299e1;
+        }
+        .test-case {
+            padding: 8px;
+            margin: 5px 0;
+            border-radius: 4px;
+        }
+        .test-case.pass {
+            background: #c6f6d5;
+            border-left: 4px solid #38a169;
+        }
+        .test-case.fail {
+            background: #fed7d7;
+            border-left: 4px solid #e53e3e;
+        }
+        .test-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .test-result {
+            font-size: 0.9em;
+            color: #666;
+        }
+        .summary {
+            background: #edf2f7;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .summary.pass {
+            background: #c6f6d5;
+        }
+        .summary.fail {
+            background: #fed7d7;
+        }
+        code {
+            background: #f7fafc;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <div class="test-header">
+            <h1>DC Cable Diameter Calculator - Test Suite</h1>
+            <p>Testing calculation functions</p>
+        </div>
+        <div id="test-results"></div>
+        <div id="summary"></div>
+    </div>
+
+    <script>
+        // Simple test framework
+        const TestRunner = {
+            tests: [],
+            passed: 0,
+            failed: 0,
+
+            test: function(name, fn) {
+                this.tests.push({ name, fn });
+            },
+
+            assert: function(condition, message) {
+                if (!condition) {
+                    throw new Error(message || 'Assertion failed');
+                }
+            },
+
+            assertEqual: function(actual, expected, message) {
+                const tolerance = 0.0001;
+                const diff = Math.abs(actual - expected);
+                if (diff > tolerance) {
+                    throw new Error(message || `Expected ${expected}, got ${actual} (diff: ${diff})`);
+                }
+            },
+
+            assertClose: function(actual, expected, tolerance, message) {
+                const diff = Math.abs(actual - expected);
+                if (diff > tolerance) {
+                    throw new Error(message || `Expected ${expected} ± ${tolerance}, got ${actual} (diff: ${diff})`);
+                }
+            },
+
+            run: function() {
+                const resultsDiv = document.getElementById('test-results');
+                const summaryDiv = document.getElementById('summary');
+                this.passed = 0;
+                this.failed = 0;
+
+                this.tests.forEach(test => {
+                    const testDiv = document.createElement('div');
+                    testDiv.className = 'test-case';
+                    
+                    try {
+                        test.fn();
+                        testDiv.classList.add('pass');
+                        testDiv.innerHTML = `
+                            <div class="test-name">✅ ${test.name}</div>
+                        `;
+                        this.passed++;
+                    } catch (error) {
+                        testDiv.classList.add('fail');
+                        testDiv.innerHTML = `
+                            <div class="test-name">❌ ${test.name}</div>
+                            <div class="test-result">Error: ${error.message}</div>
+                        `;
+                        this.failed++;
+                    }
+                    
+                    resultsDiv.appendChild(testDiv);
+                });
+
+                // Summary
+                const total = this.passed + this.failed;
+                const passRate = ((this.passed / total) * 100).toFixed(1);
+                summaryDiv.className = `summary ${this.failed === 0 ? 'pass' : 'fail'}`;
+                summaryDiv.innerHTML = `
+                    <h2>Test Summary</h2>
+                    <p><strong>Total:</strong> ${total} tests</p>
+                    <p><strong>Passed:</strong> ${this.passed} (${passRate}%)</p>
+                    <p><strong>Failed:</strong> ${this.failed}</p>
+                `;
+            }
+        };
+
+        // Import calculation functions from index.html
+        // Constants
+        const COPPER_RESISTIVITY_20C = 0.0175;
+        const ALUMINUM_RESISTIVITY_20C = 0.0283;
+        const COPPER_TEMP_COEFFICIENT = 0.00393;
+        const ALUMINUM_TEMP_COEFFICIENT = 0.00403;
+        const REFERENCE_TEMP = 20.0;
+
+        const materials = {
+            copper: {
+                nameKey: "materialCopper",
+                resistivity20C: COPPER_RESISTIVITY_20C,
+                tempCoefficient: COPPER_TEMP_COEFFICIENT
+            },
+            aluminum: {
+                nameKey: "materialAluminum",
+                resistivity20C: ALUMINUM_RESISTIVITY_20C,
+                tempCoefficient: ALUMINUM_TEMP_COEFFICIENT
+            }
+        };
+
+        const installationAdjustments = {
+            air: 0.0,
+            conduit: 10.0,
+            isolated: 20.0
+        };
+
+        const standardMetricSizes = [0.5, 0.75, 1.0, 1.5, 2.5, 4.0, 6.0, 10.0, 16.0, 25.0, 35.0, 50.0, 70.0, 95.0, 120.0, 150.0, 185.0, 240.0];
+
+        const awgSizes = [
+            { label: "18", area: 0.823 },
+            { label: "16", area: 1.309 },
+            { label: "14", area: 2.081 },
+            { label: "12", area: 3.309 },
+            { label: "10", area: 5.261 },
+            { label: "8", area: 8.367 },
+            { label: "6", area: 13.30 },
+            { label: "4", area: 21.15 },
+            { label: "2", area: 33.62 },
+            { label: "1", area: 42.41 },
+            { label: "1/0", area: 53.49 },
+            { label: "2/0", area: 67.43 },
+            { label: "3/0", area: 85.01 },
+            { label: "4/0", area: 107.2 }
+        ];
+
+        const wireTypes = {
+            generic: { name: "Generic", maxTemp: 90.0 },
+            flry: { name: "FLRY", maxTemp: 105.0 },
+            pvc: { name: "PVC", maxTemp: 70.0 }
+        };
+
+        // Functions (copied from index.html)
+        function fahrenheitToCelsius(f) {
+            return (f - 32) * 5 / 9;
+        }
+
+        function celsiusToFahrenheit(c) {
+            return c * 9 / 5 + 32;
+        }
+
+        function calculateResistivityAtTemp(material, tempCelsius) {
+            return material.resistivity20C * (1 + material.tempCoefficient * (tempCelsius - REFERENCE_TEMP));
+        }
+
+        function calculateEffectiveTemp(ambientTempCelsius, installation) {
+            return ambientTempCelsius + installationAdjustments[installation];
+        }
+
+        function validateWireTemperature(effectiveTempCelsius, wireType) {
+            if (effectiveTempCelsius > wireType.maxTemp) {
+                return { isValid: false, message: `Temperature exceeds max` };
+            }
+            if (effectiveTempCelsius > wireType.maxTemp * 0.9) {
+                return { isValid: true, message: `Temperature close to max` };
+            }
+            return { isValid: true, message: "" };
+        }
+
+        function calculateCableArea(voltage, current, length, maxVoltageDropPercent, material, roundTrip, ambientTempCelsius, installation) {
+            const maxVoltageDrop = voltage * (maxVoltageDropPercent / 100.0);
+            const distanceFactor = roundTrip ? 2.0 : 1.0;
+            const effectiveTemp = calculateEffectiveTemp(ambientTempCelsius, installation);
+            const resistivity = calculateResistivityAtTemp(material, effectiveTemp);
+            return (current * resistivity * length * distanceFactor) / maxVoltageDrop;
+        }
+
+        function areaToDiameter(area) {
+            return 2 * Math.sqrt(area / Math.PI);
+        }
+
+        function findClosestMetricSize(requiredArea) {
+            for (const size of standardMetricSizes) {
+                if (size >= requiredArea) {
+                    return { size: size, diff: size - requiredArea };
+                }
+            }
+            const largestSize = standardMetricSizes[standardMetricSizes.length - 1];
+            return { size: largestSize, diff: requiredArea - largestSize };
+        }
+
+        function findClosestAWG(requiredArea) {
+            for (const awg of awgSizes) {
+                if (awg.area >= requiredArea) {
+                    return { label: awg.label, area: awg.area, diff: awg.area - requiredArea };
+                }
+            }
+            const largestAWG = awgSizes[awgSizes.length - 1];
+            return { label: largestAWG.label, area: largestAWG.area, diff: requiredArea - largestAWG.area };
+        }
+
+        // Test Suite
+        TestRunner.test('fahrenheitToCelsius - converts 32°F to 0°C', () => {
+            TestRunner.assertEqual(fahrenheitToCelsius(32), 0);
+        });
+
+        TestRunner.test('fahrenheitToCelsius - converts 212°F to 100°C', () => {
+            TestRunner.assertEqual(fahrenheitToCelsius(212), 100);
+        });
+
+        TestRunner.test('fahrenheitToCelsius - converts 68°F to 20°C', () => {
+            TestRunner.assertEqual(fahrenheitToCelsius(68), 20);
+        });
+
+        TestRunner.test('celsiusToFahrenheit - converts 0°C to 32°F', () => {
+            TestRunner.assertEqual(celsiusToFahrenheit(0), 32);
+        });
+
+        TestRunner.test('celsiusToFahrenheit - converts 100°C to 212°F', () => {
+            TestRunner.assertEqual(celsiusToFahrenheit(100), 212);
+        });
+
+        TestRunner.test('celsiusToFahrenheit - converts 20°C to 68°F', () => {
+            TestRunner.assertEqual(celsiusToFahrenheit(20), 68);
+        });
+
+        TestRunner.test('calculateResistivityAtTemp - copper at 20°C', () => {
+            const resistivity = calculateResistivityAtTemp(materials.copper, 20.0);
+            TestRunner.assertEqual(resistivity, COPPER_RESISTIVITY_20C);
+        });
+
+        TestRunner.test('calculateResistivityAtTemp - copper at 40°C increases', () => {
+            const resistivity20 = calculateResistivityAtTemp(materials.copper, 20.0);
+            const resistivity40 = calculateResistivityAtTemp(materials.copper, 40.0);
+            TestRunner.assert(resistivity40 > resistivity20, 'Resistivity should increase with temperature');
+        });
+
+        TestRunner.test('calculateResistivityAtTemp - aluminum at 20°C', () => {
+            const resistivity = calculateResistivityAtTemp(materials.aluminum, 20.0);
+            TestRunner.assertEqual(resistivity, ALUMINUM_RESISTIVITY_20C);
+        });
+
+        TestRunner.test('calculateEffectiveTemp - air installation (no adjustment)', () => {
+            const temp = calculateEffectiveTemp(25.0, 'air');
+            TestRunner.assertEqual(temp, 25.0);
+        });
+
+        TestRunner.test('calculateEffectiveTemp - conduit installation (+10°C)', () => {
+            const temp = calculateEffectiveTemp(25.0, 'conduit');
+            TestRunner.assertEqual(temp, 35.0);
+        });
+
+        TestRunner.test('calculateEffectiveTemp - isolated installation (+20°C)', () => {
+            const temp = calculateEffectiveTemp(25.0, 'isolated');
+            TestRunner.assertEqual(temp, 45.0);
+        });
+
+        TestRunner.test('validateWireTemperature - valid temperature', () => {
+            const result = validateWireTemperature(50.0, wireTypes.generic);
+            TestRunner.assert(result.isValid === true, 'Should be valid');
+            TestRunner.assert(result.message === '', 'Should have no warning');
+        });
+
+        TestRunner.test('validateWireTemperature - temperature exceeds max', () => {
+            const result = validateWireTemperature(100.0, wireTypes.generic);
+            TestRunner.assert(result.isValid === false, 'Should be invalid');
+            TestRunner.assert(result.message !== '', 'Should have warning message');
+        });
+
+        TestRunner.test('validateWireTemperature - temperature close to max (caution)', () => {
+            const result = validateWireTemperature(85.0, wireTypes.generic); // 90% of 90°C = 81°C
+            TestRunner.assert(result.isValid === true, 'Should be valid but with caution');
+            TestRunner.assert(result.message !== '', 'Should have caution message');
+        });
+
+        TestRunner.test('areaToDiameter - calculates diameter correctly', () => {
+            // Area = π * r², so for area = π, radius = 1, diameter = 2
+            const area = Math.PI;
+            const diameter = areaToDiameter(area);
+            TestRunner.assertClose(diameter, 2.0, 0.0001);
+        });
+
+        TestRunner.test('areaToDiameter - round trip verification', () => {
+            // Test that diameter -> area -> diameter gives same result
+            const testArea = 10.0;
+            const diameter = areaToDiameter(testArea);
+            const radius = diameter / 2;
+            const calculatedArea = Math.PI * radius * radius;
+            TestRunner.assertClose(calculatedArea, testArea, 0.0001);
+        });
+
+        TestRunner.test('findClosestMetricSize - rounds up correctly', () => {
+            const result = findClosestMetricSize(3.5);
+            TestRunner.assert(result.size >= 3.5, 'Should round up');
+            TestRunner.assertEqual(result.size, 4.0);
+            TestRunner.assert(result.diff >= 0, 'Diff should be positive when rounding up');
+        });
+
+        TestRunner.test('findClosestMetricSize - exact match', () => {
+            const result = findClosestMetricSize(4.0);
+            TestRunner.assertEqual(result.size, 4.0);
+            TestRunner.assertEqual(result.diff, 0.0);
+        });
+
+        TestRunner.test('findClosestMetricSize - very small area', () => {
+            const result = findClosestMetricSize(0.3);
+            TestRunner.assertEqual(result.size, 0.5);
+        });
+
+        TestRunner.test('findClosestMetricSize - exceeds all sizes', () => {
+            const result = findClosestMetricSize(500.0);
+            TestRunner.assertEqual(result.size, 240.0);
+            TestRunner.assert(result.diff < 0, 'Diff should be negative when exceeding max');
+        });
+
+        TestRunner.test('findClosestAWG - rounds up correctly', () => {
+            const result = findClosestAWG(3.5);
+            TestRunner.assert(result.area >= 3.5, 'Should round up');
+            TestRunner.assertEqual(result.label, '12');
+            TestRunner.assertEqual(result.area, 3.309);
+        });
+
+        TestRunner.test('findClosestAWG - exact match', () => {
+            const result = findClosestAWG(5.261);
+            TestRunner.assertEqual(result.label, '10');
+            TestRunner.assertEqual(result.area, 5.261);
+        });
+
+        TestRunner.test('findClosestAWG - very small area', () => {
+            const result = findClosestAWG(0.5);
+            TestRunner.assertEqual(result.label, '18');
+        });
+
+        TestRunner.test('findClosestAWG - exceeds all sizes', () => {
+            const result = findClosestAWG(200.0);
+            TestRunner.assertEqual(result.label, '4/0');
+            TestRunner.assert(result.diff < 0, 'Diff should be negative when exceeding max');
+        });
+
+        TestRunner.test('calculateCableArea - 12V, 10A, 5m, 3%, copper, one-way, 20°C, air', () => {
+            // Known test case: should give approximately 4.86 mm²
+            const area = calculateCableArea(12, 10, 5, 3, materials.copper, false, 20, 'air');
+            TestRunner.assertClose(area, 4.86, 0.1);
+        });
+
+        TestRunner.test('calculateCableArea - round trip doubles area requirement', () => {
+            const areaOneWay = calculateCableArea(12, 10, 5, 3, materials.copper, false, 20, 'air');
+            const areaRoundTrip = calculateCableArea(12, 10, 5, 3, materials.copper, true, 20, 'air');
+            TestRunner.assertClose(areaRoundTrip, areaOneWay * 2, 0.01);
+        });
+
+        TestRunner.test('calculateCableArea - higher temperature requires larger area', () => {
+            const area20 = calculateCableArea(12, 10, 5, 3, materials.copper, false, 20, 'air');
+            const area40 = calculateCableArea(12, 10, 5, 3, materials.copper, false, 40, 'air');
+            TestRunner.assert(area40 > area20, 'Higher temperature should require larger area');
+        });
+
+        TestRunner.test('calculateCableArea - aluminum requires larger area than copper', () => {
+            const areaCopper = calculateCableArea(12, 10, 5, 3, materials.copper, false, 20, 'air');
+            const areaAluminum = calculateCableArea(12, 10, 5, 3, materials.aluminum, false, 20, 'air');
+            TestRunner.assert(areaAluminum > areaCopper, 'Aluminum should require larger area');
+        });
+
+        TestRunner.test('calculateCableArea - conduit installation increases area requirement', () => {
+            const areaAir = calculateCableArea(12, 10, 5, 3, materials.copper, false, 20, 'air');
+            const areaConduit = calculateCableArea(12, 10, 5, 3, materials.copper, false, 20, 'conduit');
+            TestRunner.assert(areaConduit > areaAir, 'Conduit installation should require larger area');
+        });
+
+        TestRunner.test('calculateCableArea - higher voltage drop allows smaller area', () => {
+            const area3 = calculateCableArea(12, 10, 5, 3, materials.copper, false, 20, 'air');
+            const area5 = calculateCableArea(12, 10, 5, 5, materials.copper, false, 20, 'air');
+            TestRunner.assert(area5 < area3, 'Higher voltage drop should allow smaller area');
+        });
+
+        // Run tests when page loads
+        window.addEventListener('DOMContentLoaded', () => {
+            TestRunner.run();
+        });
+    </script>
+</body>
+</html>
+

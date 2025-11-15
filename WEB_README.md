@@ -92,9 +92,32 @@ Then visit `http://localhost:8000`
 ```
 .
 ├── index.html          # Main web application (single file)
+├── test.html           # Test suite for calculation functions
 ├── WEB_README.md       # This file
 └── ...                 # Other project files
 ```
+
+## Testing
+
+A comprehensive test suite is included in `test.html`. To run the tests:
+
+1. Open `test.html` in your web browser
+2. The tests will run automatically and display results
+3. All calculation functions are tested including:
+   - Temperature conversions (Fahrenheit ↔ Celsius)
+   - Resistivity calculations at different temperatures
+   - Effective temperature calculations
+   - Wire temperature validation
+   - Cable area calculations
+   - Diameter calculations
+   - Standard size lookups (metric and AWG)
+
+The test suite includes:
+- ✅ 30+ test cases
+- ✅ Edge case testing
+- ✅ Round-trip verification
+- ✅ Comparison tests (copper vs aluminum, different temperatures, etc.)
+- ✅ Visual test results with pass/fail indicators
 
 ## Browser Compatibility
 
