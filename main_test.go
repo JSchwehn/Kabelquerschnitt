@@ -180,7 +180,8 @@ func TestAreaToDiameter(t *testing.T) {
 	t.Run("formula verification", func(t *testing.T) {
 		testArea := 10.0
 		diameter := areaToDiameter(testArea)
-		calculatedArea := math.Pi * math.Pow(diameter/2, 2)
+		radius := diameter / 2
+		calculatedArea := math.Pi * radius * radius
 		if math.Abs(calculatedArea-testArea) > 0.0001 {
 			t.Errorf("Formula verification failed: area %v -> diameter %v -> area %v", testArea, diameter, calculatedArea)
 		}

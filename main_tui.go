@@ -11,7 +11,6 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/list"
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
@@ -40,9 +39,6 @@ var (
 	warningStyle = lipgloss.NewStyle().
 			Foreground(lipgloss.Color("#FFB86C")).
 			Bold(true)
-
-	successStyle = lipgloss.NewStyle().
-			Foreground(lipgloss.Color("#50FA7B"))
 
 	helpStyle = lipgloss.NewStyle().
 			Foreground(lipgloss.Color("#626262"))
@@ -438,17 +434,18 @@ func (m *model) calculate() {
 }
 
 func (m model) View() string {
-	if m.step == 0 {
+	switch m.step {
+	case 0:
 		return m.inputView()
-	} else if m.step == 1 {
+	case 1:
 		return m.materialView()
-	} else if m.step == 2 {
+	case 2:
 		return m.installationView()
-	} else if m.step == 3 {
+	case 3:
 		return m.wireTypeView()
-	} else if m.step == 4 {
+	case 4:
 		return m.roundTripView()
-	} else {
+	default:
 		return m.resultsView()
 	}
 }
@@ -609,14 +606,5 @@ func (d itemDelegate) Render(w io.Writer, m list.Model, index int, listItem list
 		str = "  " + str
 	}
 
-	fmt.Fprint(w, str)
-}
-
-// Helper key struct (not used but required by bubbles)
-type keyMap struct {
-	Up    key.Binding
-	Down  key.Binding
-	Enter key.Binding
-	Esc   key.Binding
-	Quit  key.Binding
+	_, _ = fmt.Fprint(w, str)
 }
