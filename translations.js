@@ -2,7 +2,7 @@ const translations = {
     en: {
         title: "DC Cable Diameter Calculator",
         subtitle: "Calculate required cable cross-sectional area and diameter for DC electrical systems",
-        supports: "Supports 12V, 24V, 48V, 50V DC systems",
+        supports: "Supports 12V, 24V, 48V, 60V DC systems",
         language: "Language",
         inputParameters: "Input Parameters",
         systemVoltage: "System Voltage (V)",
@@ -57,7 +57,7 @@ const translations = {
     de: {
         title: "DC-Kabeldurchmesser-Rechner",
         subtitle: "Berechnen Sie die erforderliche Kabelquerschnittsfläche und den Durchmesser für DC-Elektrosysteme",
-        supports: "Unterstützt 12V, 24V, 48V, 50V DC-Systeme",
+        supports: "Unterstützt 12V, 24V, 48V, 60V DC-Systeme",
         language: "Sprache",
         inputParameters: "Eingabeparameter",
         systemVoltage: "Systemspannung (V)",
@@ -112,7 +112,7 @@ const translations = {
     "de-simple": {
         title: "Rechner für Kabel-Durchmesser",
         subtitle: "Berechnen Sie die richtige Kabel-Stärke für Gleichstrom-Anlagen",
-        supports: "Funktioniert mit 12V, 24V, 48V und 50V Gleichstrom-Anlagen",
+        supports: "Funktioniert mit 12V, 24V, 48V und 60V Gleichstrom-Anlagen",
         language: "Sprache",
         inputParameters: "Eingaben",
         systemVoltage: "Spannung in Volt (V)",
@@ -167,7 +167,7 @@ const translations = {
     fr: {
         title: "Calculateur de Diamètre de Câble CC",
         subtitle: "Calculez la section transversale et le diamètre de câble requis pour les systèmes électriques CC",
-        supports: "Prend en charge les systèmes CC 12V, 24V, 48V, 50V",
+        supports: "Prend en charge les systèmes CC 12V, 24V, 48V, 60V",
         language: "Langue",
         inputParameters: "Paramètres d'entrée",
         systemVoltage: "Tension système (V)",
@@ -222,7 +222,7 @@ const translations = {
     sv: {
         title: "DC Kabeldiametraräknare",
         subtitle: "Beräkna erforderlig kabeltvärsnittsarea och diameter för DC-elektriska system",
-        supports: "Stöder 12V, 24V, 48V, 50V DC-system",
+        supports: "Stöder 12V, 24V, 48V, 60V DC-system",
         language: "Språk",
         inputParameters: "Indataparametrar",
         systemVoltage: "Systemspänning (V)",

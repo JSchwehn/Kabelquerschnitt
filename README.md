@@ -238,7 +238,7 @@ This separation provides:
 - The calculations match the Go implementation exactly
 - Language preferences are stored locally in your browser (localStorage)
 - Cable sizes are rounded up to the nearest standard size for safety
-- Maximum system voltage is configurable via `MAX_VOLTAGE` constant in `script.js` (default: 50V)
+- Maximum system voltage is configurable via `MAX_VOLTAGE` constant in `script.js` (default: 60V)
 - Translations are managed in `translations.js` - easy to add new languages or modify existing translations
 
 ## License
