@@ -1,9 +1,9 @@
 // Language and translations
 // Translations are loaded from translations.js
-let currentLanguage = localStorage.getItem('language') || 'en';
+let currentLanguage = localStorage.getItem('language') || 'de';
 // Translation function
 function t(key, params = {}) {
-    let text = translations[currentLanguage][key] || translations['en'][key] || key;
+    let text = translations[currentLanguage][key] || translations['de'][key] || key;
     Object.keys(params).forEach(param => {
         text = text.replace(`{${param}}`, params[param]);
     });
@@ -283,6 +283,9 @@ function calculate() {
     // Calculate effective temperature
     const effectiveTemp = calculateEffectiveTemp(ambientTempCelsius, installation);
 
+    // Calculate resistivity at effective temperature
+    const resistivity = calculateResistivityAtTemp(material, effectiveTemp);
+
     // Validate wire temperature
     const tempValidation = validateWireTemperature(effectiveTemp, wireType);
 
@@ -295,7 +298,6 @@ function calculate() {
     const awgResult = findClosestAWG(requiredArea);
 
     // Calculate actual voltage drops
-    const resistivity = calculateResistivityAtTemp(material, effectiveTemp);
     const distanceFactor = roundTrip ? 2.0 : 1.0;
     const actualDropMetric = (current * resistivity * length * distanceFactor) / metricResult.size;
     const actualDropPercentMetric = (actualDropMetric / voltage) * 100;
@@ -308,6 +310,10 @@ function calculate() {
     document.getElementById('result-length').textContent = `${length.toFixed(2)} m (${roundTrip ? t('roundTrip') : t('oneWay')})`;
     document.getElementById('result-drop').textContent = `${maxVoltageDropPercent.toFixed(2)}% (${(voltage * maxVoltageDropPercent / 100).toFixed(2)} V)`;
     document.getElementById('result-material').textContent = t(material.nameKey);
+
+    // NEU: Spezifischen Widerstand anzeigen
+    document.getElementById('result-resistivity').textContent = `${resistivity.toFixed(4)} Ω·mm²/m`;
+
     document.getElementById('result-wiretype').textContent = `${wireType.name} (Max: ${wireType.maxTemp}°C)`;
     document.getElementById('result-installation').textContent = getInstallationName(installation);
     document.getElementById('result-ambient').textContent = `${ambientTemp.toFixed(1)}°${tempUnit} (${ambientTempCelsius.toFixed(1)}°C)`;
