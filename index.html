@@ -6,6 +6,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DC Cable Diameter Calculator</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- MathJax 3.x -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)']],
+                displayMath: [['\\[', '\\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+            }
+        };
+    </script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <style>
         @media (prefers-color-scheme: dark) {
             :root {
@@ -204,6 +220,23 @@
                     </div>
                 </div>
 
+                <!-- Interactive Formula Display -->
+                <div id="interactive-formula"
+                    class="mt-6 p-4 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg border border-indigo-200 dark:border-indigo-800">
+                    <h3 class="font-semibold text-indigo-900 dark:text-indigo-200 mb-3"
+                        data-i18n="interactiveFormulaTitle">Calculation Formula</h3>
+                    <div class="bg-white dark:bg-gray-800 p-4 rounded border border-indigo-100 dark:border-indigo-800">
+                        <div class="text-sm text-gray-600 dark:text-gray-400 mb-2"
+                            data-i18n="interactiveFormulaDescription">Required cable cross-sectional area:</div>
+                        <div id="formula-display" class="text-center text-lg py-4 overflow-x-auto">
+                            \[A = \frac{I \times \rho(T_{eff}) \times L \times d}{\Delta V_{max}}\]
+                        </div>
+                        <div id="formula-values" class="mt-3 text-xs text-gray-600 dark:text-gray-400 space-y-1">
+                            <div data-i18n="interactiveFormulaNote">Enter values above to see the calculation</div>
+                        </div>
+                    </div>
+                </div>
+
                 <button onclick="calculate()" id="calculateBtn" type="button" aria-label="Calculate cable size"
                     class="mt-6 w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md transition duration-200 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
                     data-i18n="calculate">
@@ -285,10 +318,12 @@
                         </div>
 
                         <div>
-                            <span class="text-sm text-blue-700 dark:text-blue-300" data-i18n="specificResistivity">Spezifischer Widerstand:</span>
-                            <div class="text-2xl font-bold text-blue-900 dark:text-blue-100" id="result-resistivity"></div>
+                            <span class="text-sm text-blue-700 dark:text-blue-300"
+                                data-i18n="specificResistivity">Spezifischer Widerstand:</span>
+                            <div class="text-2xl font-bold text-blue-900 dark:text-blue-100" id="result-resistivity">
+                            </div>
                         </div>
-                        
+
                     </div>
                 </div>
 
@@ -338,6 +373,352 @@
                     </dl>
                 </div>
 
+                <!-- Fuse Recommendation Section -->
+                <div class="mt-6 p-4 bg-orange-50 dark:bg-orange-900/20 rounded-lg border border-orange-200 dark:border-orange-800"
+                    role="region" aria-labelledby="fuse-heading">
+                    <h3 id="fuse-heading" class="font-semibold text-orange-900 dark:text-orange-200 mb-3"
+                        data-i18n="fuseRecommendation">
+                        Fuse Recommendation</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div
+                            class="bg-white dark:bg-gray-800 p-4 rounded border border-orange-100 dark:border-orange-800">
+                            <div class="text-sm text-orange-700 dark:text-orange-300 mb-2" data-i18n="metricFuseLabel">
+                                Metric Size:</div>
+                            <div class="text-lg font-semibold text-orange-900 dark:text-orange-100 mb-2">
+                                <span data-i18n="recommendedFuseSize">Recommended Fuse:</span>
+                                <span id="result-fuse-metric" class="text-2xl"></span>
+                            </div>
+                            <div class="text-xs text-orange-600 dark:text-orange-400 space-y-1">
+                                <div><span data-i18n="maxCurrentCapacity">Max. Current Capacity:</span> <span
+                                        id="result-ampacity-metric"></span></div>
+                                <div><span data-i18n="safetyFactor">Safety Factor:</span> <span
+                                        id="result-safety-factor-metric"></span></div>
+                            </div>
+                        </div>
+                        <div
+                            class="bg-white dark:bg-gray-800 p-4 rounded border border-orange-100 dark:border-orange-800">
+                            <div class="text-sm text-orange-700 dark:text-orange-300 mb-2" data-i18n="awgFuseLabel">AWG
+                                Size:</div>
+                            <div class="text-lg font-semibold text-orange-900 dark:text-orange-100 mb-2">
+                                <span data-i18n="recommendedFuseSize">Recommended Fuse:</span>
+                                <span id="result-fuse-awg" class="text-2xl"></span>
+                            </div>
+                            <div class="text-xs text-orange-600 dark:text-orange-400 space-y-1">
+                                <div><span data-i18n="maxCurrentCapacity">Max. Current Capacity:</span> <span
+                                        id="result-ampacity-awg"></span></div>
+                                <div><span data-i18n="safetyFactor">Safety Factor:</span> <span
+                                        id="result-safety-factor-awg"></span></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="fuse-warning"
+                        class="hidden mt-3 p-3 bg-yellow-100 dark:bg-yellow-900/30 rounded border border-yellow-300 dark:border-yellow-700">
+                        <div class="text-sm text-yellow-800 dark:text-yellow-200" id="fuse-warning-text"></div>
+                    </div>
+                    <div class="mt-3 text-xs text-orange-600 dark:text-orange-400" data-i18n="fuseNote">
+                        Fuse size is calculated with a safety factor to protect the cable. Always use the recommended
+                        fuse size or smaller.
+                    </div>
+
+                    <!-- References Section -->
+                    <div class="mt-4 pt-4 border-t border-orange-200 dark:border-orange-700">
+                        <div class="flex items-start gap-2">
+                            <svg class="w-4 h-4 mt-0.5 text-orange-600 dark:text-orange-400 flex-shrink-0" fill="none"
+                                stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <div class="flex-1 text-xs text-orange-600 dark:text-orange-400">
+                                <div class="font-semibold mb-1" data-i18n="referencesTitle">References:</div>
+                                <div class="space-y-1">
+                                    <div>
+                                        <span data-i18n="basedOnStandards">Based on standards:</span>
+                                        <a href="https://www.iso.org/standard/6722.html" target="_blank"
+                                            rel="noopener noreferrer"
+                                            class="text-orange-700 dark:text-orange-300 hover:underline ml-1">ISO
+                                            6722</a>,
+                                        <a href="https://www.din.de/" target="_blank" rel="noopener noreferrer"
+                                            class="text-orange-700 dark:text-orange-300 hover:underline ml-1">DIN
+                                            72551</a>,
+                                        <a href="https://www.sae.org/standards/content/j1127_201508/" target="_blank"
+                                            rel="noopener noreferrer"
+                                            class="text-orange-700 dark:text-orange-300 hover:underline ml-1">SAE
+                                            J1127</a>
+                                    </div>
+                                    <div>
+                                        <span data-i18n="learnMore">Learn more:</span>
+                                        <a href="#" id="link-wikipedia-wire-gauge-fuse" target="_blank"
+                                            rel="noopener noreferrer"
+                                            class="text-orange-700 dark:text-orange-300 hover:underline ml-1"
+                                            data-i18n="linkWikipedia">Wikipedia</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Formulas Section -->
+                <div class="mt-6 p-4 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg border border-indigo-200 dark:border-indigo-800"
+                    role="region" aria-labelledby="formulas-heading">
+                    <button onclick="toggleFormulas()" id="formulas-toggle"
+                        class="w-full flex justify-between items-center text-left font-semibold text-indigo-900 dark:text-indigo-200 mb-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 rounded-md p-2 -m-2"
+                        aria-expanded="false" aria-controls="formulas-content">
+                        <span id="formulas-heading" data-i18n="formulasTitle">Formulas Used</span>
+                        <svg id="formulas-icon" class="w-5 h-5 transform transition-transform" fill="none"
+                            stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7">
+                            </path>
+                        </svg>
+                    </button>
+                    <div id="formulas-content" class="hidden space-y-4 text-sm text-gray-700 dark:text-gray-300">
+                        <!-- Temperature Conversion -->
+                        <div>
+                            <h4 class="font-semibold mb-2 text-indigo-900 dark:text-indigo-200"
+                                data-i18n="formulaTempConversion">Temperature Conversion</h4>
+                            <div
+                                class="bg-white dark:bg-gray-800 p-3 rounded border border-indigo-100 dark:border-indigo-800">
+                                <div class="mb-2" data-i18n="formulaTempCelsius">Celsius to Fahrenheit:</div>
+                                <div class="text-center mb-3">\[T(°F) = T(°C) \times \frac{9}{5} + 32\]</div>
+                                <div class="mb-2" data-i18n="formulaTempFahrenheit">Fahrenheit to Celsius:</div>
+                                <div class="text-center mb-3">\[T(°C) = (T(°F) - 32) \times \frac{5}{9}\]</div>
+                                <div
+                                    class="mt-3 pt-3 border-t border-indigo-200 dark:border-indigo-700 flex flex-wrap gap-3 text-xs">
+                                    <span class="text-indigo-600 dark:text-indigo-400" data-i18n="learnMore">Learn
+                                        more:</span>
+                                    <a href="https://www.wolframalpha.com/input?i=temperature+conversion"
+                                        target="_blank" rel="noopener noreferrer"
+                                        class="text-indigo-700 dark:text-indigo-300 hover:underline"
+                                        data-i18n="linkWolframAlpha">WolframAlpha</a>
+                                    <span class="text-gray-400">|</span>
+                                    <a href="#" id="link-wikipedia-temp" target="_blank" rel="noopener noreferrer"
+                                        class="text-indigo-700 dark:text-indigo-300 hover:underline"
+                                        data-i18n="linkWikipedia">Wikipedia</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Resistivity at Temperature -->
+                        <div>
+                            <h4 class="font-semibold mb-2 text-indigo-900 dark:text-indigo-200"
+                                data-i18n="formulaResistivity">Resistivity at Temperature</h4>
+                            <div
+                                class="bg-white dark:bg-gray-800 p-3 rounded border border-indigo-100 dark:border-indigo-800">
+                                <div class="text-center mb-2">\[\rho(T) = \rho_{25°C} \times (1 + \alpha \times (T -
+                                    T_{ref}))\]</div>
+                                <div class="text-xs mt-2 space-y-1">
+                                    <div><span class="font-semibold">\(\rho(T)\)</span>: <span
+                                            data-i18n="formulaVarResistivity">Resistivity at temperature T</span>
+                                        (\(\Omega \cdot mm^2/m\))</div>
+                                    <div><span class="font-semibold">\(\rho_{25°C}\)</span>: <span
+                                            data-i18n="formulaVarResistivityRef">Reference resistivity at 25°C</span>
+                                        (\(\Omega \cdot mm^2/m\))</div>
+                                    <div><span class="font-semibold">\(\alpha\)</span>: <span
+                                            data-i18n="formulaVarTempCoeff">Temperature coefficient</span> (\(/°C\))
+                                    </div>
+                                    <div><span class="font-semibold">\(T\)</span>: <span
+                                            data-i18n="formulaVarTemp">Temperature</span> (°C)</div>
+                                    <div><span class="font-semibold">\(T_{ref}\)</span>: <span
+                                            data-i18n="formulaVarTempRef">Reference temperature</span> (25°C)</div>
+                                </div>
+                                <div
+                                    class="mt-3 pt-3 border-t border-indigo-200 dark:border-indigo-700 flex flex-wrap gap-3 text-xs">
+                                    <span class="text-indigo-600 dark:text-indigo-400" data-i18n="learnMore">Learn
+                                        more:</span>
+                                    <a href="https://www.wolframalpha.com/input?i=electrical+resistivity+temperature"
+                                        target="_blank" rel="noopener noreferrer"
+                                        class="text-indigo-700 dark:text-indigo-300 hover:underline"
+                                        data-i18n="linkWolframAlpha">WolframAlpha</a>
+                                    <span class="text-gray-400">|</span>
+                                    <a href="#" id="link-wikipedia-resistivity" target="_blank"
+                                        rel="noopener noreferrer"
+                                        class="text-indigo-700 dark:text-indigo-300 hover:underline"
+                                        data-i18n="linkWikipedia">Wikipedia</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Effective Temperature -->
+                        <div>
+                            <h4 class="font-semibold mb-2 text-indigo-900 dark:text-indigo-200"
+                                data-i18n="formulaEffectiveTemp">Effective Operating Temperature</h4>
+                            <div
+                                class="bg-white dark:bg-gray-800 p-3 rounded border border-indigo-100 dark:border-indigo-800">
+                                <div class="text-center mb-2">\[T_{eff} = T_{ambient} + \Delta T_{installation}\]</div>
+                                <div class="text-xs mt-2 space-y-1">
+                                    <div><span class="font-semibold">\(T_{eff}\)</span>: <span
+                                            data-i18n="formulaVarEffectiveTemp">Effective operating temperature</span>
+                                        (°C)</div>
+                                    <div><span class="font-semibold">\(T_{ambient}\)</span>: <span
+                                            data-i18n="formulaVarAmbientTemp">Ambient temperature</span> (°C)</div>
+                                    <div><span class="font-semibold">\(\Delta T_{installation}\)</span>: <span
+                                            data-i18n="formulaVarInstallationDelta">Installation temperature
+                                            adjustment</span> (°C)</div>
+                                    <div class="mt-2 text-xs italic" data-i18n="formulaInstallationNote">Air: 0°C,
+                                        Conduit: +10°C, Isolated: +20°C</div>
+                                </div>
+                                <div
+                                    class="mt-3 pt-3 border-t border-indigo-200 dark:border-indigo-700 flex flex-wrap gap-3 text-xs">
+                                    <span class="text-indigo-600 dark:text-indigo-400" data-i18n="learnMore">Learn
+                                        more:</span>
+                                    <a href="#" id="link-wikipedia-cable-installation" target="_blank"
+                                        rel="noopener noreferrer"
+                                        class="text-indigo-700 dark:text-indigo-300 hover:underline"
+                                        data-i18n="linkWikipedia">Wikipedia</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Cable Cross-Sectional Area -->
+                        <div>
+                            <h4 class="font-semibold mb-2 text-indigo-900 dark:text-indigo-200"
+                                data-i18n="formulaCableArea">Required Cable Cross-Sectional Area</h4>
+                            <div
+                                class="bg-white dark:bg-gray-800 p-3 rounded border border-indigo-100 dark:border-indigo-800">
+                                <div class="text-center mb-2">\[A = \frac{I \times \rho(T_{eff}) \times L \times
+                                    d}{\Delta V_{max}}\]</div>
+                                <div class="text-xs mt-2 space-y-1">
+                                    <div><span class="font-semibold">\(A\)</span>: <span
+                                            data-i18n="formulaVarArea">Cross-sectional area</span> (\(mm^2\))</div>
+                                    <div><span class="font-semibold">\(I\)</span>: <span
+                                            data-i18n="formulaVarCurrent">Current</span> (A)</div>
+                                    <div><span class="font-semibold">\(\rho(T_{eff})\)</span>: <span
+                                            data-i18n="formulaVarResistivityEff">Resistivity at effective
+                                            temperature</span> (\(\Omega \cdot mm^2/m\))</div>
+                                    <div><span class="font-semibold">\(L\)</span>: <span
+                                            data-i18n="formulaVarLength">Cable length</span> (m)</div>
+                                    <div><span class="font-semibold">\(d\)</span>: <span
+                                            data-i18n="formulaVarDistanceFactor">Distance factor</span> (1 for one-way,
+                                        2 for round trip)</div>
+                                    <div><span class="font-semibold">\(\Delta V_{max}\)</span>: <span
+                                            data-i18n="formulaVarMaxVoltageDrop">Maximum voltage drop</span> (V)</div>
+                                </div>
+                                <div
+                                    class="mt-3 pt-3 border-t border-indigo-200 dark:border-indigo-700 flex flex-wrap gap-3 text-xs">
+                                    <span class="text-indigo-600 dark:text-indigo-400" data-i18n="learnMore">Learn
+                                        more:</span>
+                                    <a href="https://www.wolframalpha.com/input?i=voltage+drop+cable+calculation"
+                                        target="_blank" rel="noopener noreferrer"
+                                        class="text-indigo-700 dark:text-indigo-300 hover:underline"
+                                        data-i18n="linkWolframAlpha">WolframAlpha</a>
+                                    <span class="text-gray-400">|</span>
+                                    <a href="#" id="link-wikipedia-voltage-drop" target="_blank"
+                                        rel="noopener noreferrer"
+                                        class="text-indigo-700 dark:text-indigo-300 hover:underline"
+                                        data-i18n="linkWikipedia">Wikipedia</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Diameter from Area -->
+                        <div>
+                            <h4 class="font-semibold mb-2 text-indigo-900 dark:text-indigo-200"
+                                data-i18n="formulaDiameter">Diameter from Cross-Sectional Area</h4>
+                            <div
+                                class="bg-white dark:bg-gray-800 p-3 rounded border border-indigo-100 dark:border-indigo-800">
+                                <div class="text-center mb-2">\[d = 2 \times \sqrt{\frac{A}{\pi}}\]</div>
+                                <div class="text-xs mt-2 space-y-1">
+                                    <div><span class="font-semibold">\(d\)</span>: <span
+                                            data-i18n="formulaVarDiameter">Diameter</span> (mm)</div>
+                                    <div><span class="font-semibold">\(A\)</span>: <span
+                                            data-i18n="formulaVarArea2">Cross-sectional area</span> (\(mm^2\))</div>
+                                </div>
+                                <div
+                                    class="mt-3 pt-3 border-t border-indigo-200 dark:border-indigo-700 flex flex-wrap gap-3 text-xs">
+                                    <span class="text-indigo-600 dark:text-indigo-400" data-i18n="learnMore">Learn
+                                        more:</span>
+                                    <a href="https://www.wolframalpha.com/input?i=circle+diameter+from+area"
+                                        target="_blank" rel="noopener noreferrer"
+                                        class="text-indigo-700 dark:text-indigo-300 hover:underline"
+                                        data-i18n="linkWolframAlpha">WolframAlpha</a>
+                                    <span class="text-gray-400">|</span>
+                                    <a href="#" id="link-wikipedia-circle" target="_blank" rel="noopener noreferrer"
+                                        class="text-indigo-700 dark:text-indigo-300 hover:underline"
+                                        data-i18n="linkWikipedia">Wikipedia</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Cable Weight -->
+                        <div>
+                            <h4 class="font-semibold mb-2 text-indigo-900 dark:text-indigo-200"
+                                data-i18n="formulaWeight">Cable Weight</h4>
+                            <div
+                                class="bg-white dark:bg-gray-800 p-3 rounded border border-indigo-100 dark:border-indigo-800">
+                                <div class="text-center mb-2">\[m = A \times L \times \rho_{material} \times n\]</div>
+                                <div class="text-xs mt-2 space-y-1">
+                                    <div><span class="font-semibold">\(m\)</span>: <span
+                                            data-i18n="formulaVarWeight">Total cable weight</span> (g)</div>
+                                    <div><span class="font-semibold">\(A\)</span>: <span
+                                            data-i18n="formulaVarArea3">Cross-sectional area</span> (\(mm^2\))</div>
+                                    <div><span class="font-semibold">\(L\)</span>: <span
+                                            data-i18n="formulaVarLength2">Cable length</span> (m)</div>
+                                    <div><span class="font-semibold">\(\rho_{material}\)</span>: <span
+                                            data-i18n="formulaVarMaterialDensity">Material density</span> (g/m per mm²)
+                                    </div>
+                                    <div><span class="font-semibold">\(n\)</span>: <span
+                                            data-i18n="formulaVarConductorCount">Number of conductors</span> (1 for
+                                        one-way, 2 for round trip)</div>
+                                </div>
+                                <div
+                                    class="mt-3 pt-3 border-t border-indigo-200 dark:border-indigo-700 flex flex-wrap gap-3 text-xs">
+                                    <span class="text-indigo-600 dark:text-indigo-400" data-i18n="learnMore">Learn
+                                        more:</span>
+                                    <a href="https://www.wolframalpha.com/input?i=wire+gauge+weight" target="_blank"
+                                        rel="noopener noreferrer"
+                                        class="text-indigo-700 dark:text-indigo-300 hover:underline"
+                                        data-i18n="linkWolframAlpha">WolframAlpha</a>
+                                    <span class="text-gray-400">|</span>
+                                    <a href="#" id="link-wikipedia-wire-gauge" target="_blank" rel="noopener noreferrer"
+                                        class="text-indigo-700 dark:text-indigo-300 hover:underline"
+                                        data-i18n="linkWikipedia">Wikipedia</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Voltage Drop -->
+                        <div>
+                            <h4 class="font-semibold mb-2 text-indigo-900 dark:text-indigo-200"
+                                data-i18n="formulaVoltageDrop">Voltage Drop</h4>
+                            <div
+                                class="bg-white dark:bg-gray-800 p-3 rounded border border-indigo-100 dark:border-indigo-800">
+                                <div class="text-center mb-2">\[\Delta V = \frac{I \times \rho(T_{eff}) \times L \times
+                                    d}{A}\]</div>
+                                <div class="text-xs mt-2 space-y-1">
+                                    <div><span class="font-semibold">\(\Delta V\)</span>: <span
+                                            data-i18n="formulaVarVoltageDrop">Voltage drop</span> (V)</div>
+                                    <div><span class="font-semibold">\(I\)</span>: <span
+                                            data-i18n="formulaVarCurrent2">Current</span> (A)</div>
+                                    <div><span class="font-semibold">\(\rho(T_{eff})\)</span>: <span
+                                            data-i18n="formulaVarResistivityEff2">Resistivity at effective
+                                            temperature</span> (\(\Omega \cdot mm^2/m\))</div>
+                                    <div><span class="font-semibold">\(L\)</span>: <span
+                                            data-i18n="formulaVarLength3">Cable length</span> (m)</div>
+                                    <div><span class="font-semibold">\(d\)</span>: <span
+                                            data-i18n="formulaVarDistanceFactor2">Distance factor</span> (1 for one-way,
+                                        2 for round trip)</div>
+                                    <div><span class="font-semibold">\(A\)</span>: <span
+                                            data-i18n="formulaVarArea4">Cross-sectional area</span> (\(mm^2\))</div>
+                                </div>
+                                <div
+                                    class="mt-3 pt-3 border-t border-indigo-200 dark:border-indigo-700 flex flex-wrap gap-3 text-xs">
+                                    <span class="text-indigo-600 dark:text-indigo-400" data-i18n="learnMore">Learn
+                                        more:</span>
+                                    <a href="https://www.wolframalpha.com/input?i=voltage+drop+calculation"
+                                        target="_blank" rel="noopener noreferrer"
+                                        class="text-indigo-700 dark:text-indigo-300 hover:underline"
+                                        data-i18n="linkWolframAlpha">WolframAlpha</a>
+                                    <span class="text-gray-400">|</span>
+                                    <a href="#" id="link-wikipedia-voltage-drop-formula" target="_blank"
+                                        rel="noopener noreferrer"
+                                        class="text-indigo-700 dark:text-indigo-300 hover:underline"
+                                        data-i18n="linkWikipedia">Wikipedia</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Safety Warning -->
                 <div class="mt-6 p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800"
                     role="alert">
@@ -361,7 +742,8 @@
                 with a qualified electrician or electrical engineer for critical applications.</span></p>
         <p class="mt-2" data-i18n="safetyNote">This tool provides calculations for voltage drop only and does not
             replace professional engineering judgment.</p>
-        <p>Source can be found at <a href="https://github.com/JSchwehn/Kabelquerschnitt/tree/web">https://github.com/JSchwehn/Kabelquerschnitt/tree/web</a>
+        <p>Source can be found at <a
+                href="https://github.com/JSchwehn/Kabelquerschnitt/tree/web">https://github.com/JSchwehn/Kabelquerschnitt/tree/web</a>
         </p>
     </div>
     </div>
